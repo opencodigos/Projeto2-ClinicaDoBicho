@@ -1,18 +1,38 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %} 
-<div class="text-center my-4">
-    <h1>Clínica do Bicho</h1>
-    <p class="lead">Bem-vindo à Clínica do Bicho! Escolha uma opção abaixo para começar.</p>    
+<div class="text-center my-5">
+  <h1 class="display-4 fw-bold">Clínica do Bicho</h1>
+  <p class="lead text-muted">Bem-vindo à Clínica do Bicho! Escolha uma opção abaixo para começar.</p>
 </div>
-    <img src="{% static 'images/bg_vet.jpg' %}" alt="Veterinário" class="img-fluid">
 
-<div class="d-flex gap-2 justify-content-center align-items-center">
-    <div class="card text-center shadow p-4" style="width: 18rem;">
-        <a href="{% url 'lista_consultas' %}" class="btn btn-transparent"><h4>Lista Consultas</h4></a>
+<div class="d-flex flex-row gap-4 justify-content-center align-items-center flex-wrap">
+    <div class="text-center">
+        <img src="{% static 'images/bg_vet.jpg' %}" alt="Veterinário" class="img-fluid rounded shadow" style="max-height: 400px; object-fit: cover;">
     </div>
-     <div class="card text-center shadow p-4 bg-info" style="width: 18rem;">
-        <a href="{% url 'lista_animais' %}" class="btn btn-transparent"><h4>Lista Animais</h4></a>
+
+    <div class="d-flex flex-column justify-content-center gap-3">
+        <div class="card text-center shadow p-4 w-md-25 border-primary hover-scale" style="width: 350px; transition: transform 0.2s;">
+            <a href="{% url 'lista_consultas' %}" class="btn btn-transparent text-primary w-100 py-3 fw-bold">
+            Lista Consultas
+            </a>
+        </div>
+        <div class="card text-center shadow p-4 w-md-25 border-primary hover-scale" style="width: 350px; transition: transform 0.2s;">
+            <a href="#" class="btn btn-transparent text-primary w-100 py-3 fw-bold">
+            Veterinários
+            </a>
+        </div>
+        <div class="card text-center shadow p-4 w-md-25 border-primary hover-scale" style="width: 350px; transition: transform 0.2s;">
+            <a href="{% url 'lista_animais' %}" class="btn btn-transparent text-primary w-100 py-3 fw-bold">
+            Lista Animais
+            </a>
+        </div>
     </div>
 </div>
+
+<style>
+  .hover-scale:hover {
+    transform: scale(1.05);
+  }
+</style> 
 {% endblock %}

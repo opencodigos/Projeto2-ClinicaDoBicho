@@ -5,6 +5,9 @@
     <h1>Lista de Consultas</h1>
     <button class="btn btn-success mb-3" onclick="window.location.href='{% url 'agendar_consulta' %}'">Agendar Consulta</button>
 </div>
+
+<div id="calendar"></div>  
+
 <table class="table table-striped">
     <thead>
         <tr>
@@ -30,5 +33,40 @@
         </tr>
         {% endfor %}
     </tbody>
-</table>
+</table> 
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var calendarEl = document.getElementById('calendar');
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        locale: 'pt-br',
+        events: '/eventos/',  // sua rota Django que retorna JSON
+
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+        },
+
+        dateClick: function(info) {
+            alert("Você clicou em: " + info.dateStr);
+        },  
+
+        eventClick: function(info) {
+            alert("Evento: " + info.event.title);
+        }
+
+      });
+      
+      calendar.render();
+    });
+
+
+    // Abre modal para ver detalhes da consulta
+    
+  </script> 
 {% endblock %}
