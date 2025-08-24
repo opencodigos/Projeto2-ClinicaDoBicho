@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %} 
+<div class="text-center my-4">
+    <h1>Clínica do Bicho</h1>
+    <p class="lead">Bem-vindo à Clínica do Bicho! Escolha uma opção abaixo para começar.</p>    
+</div>
+    <img src="{% static 'images/bg_vet.jpg' %}" alt="Veterinário" class="img-fluid">
+
+<div class="d-flex gap-2 justify-content-center align-items-center">
+    <div class="card text-center shadow p-4" style="width: 18rem;">
+        <a href="{% url 'lista_consultas' %}" class="btn btn-transparent"><h4>Lista Consultas</h4></a>
+    </div>
+     <div class="card text-center shadow p-4 bg-info" style="width: 18rem;">
+        <a href="{% url 'lista_animais' %}" class="btn btn-transparent"><h4>Lista Animais</h4></a>
+    </div>
+</div>
+{% endblock %}

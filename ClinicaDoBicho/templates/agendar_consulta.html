@@ -1,0 +1,90 @@
+{% extends 'base.html' %} 
+{% block content %}
+<h2>Agendar Consulta</h2> 
+ 
+<!-- Buscar cliente -->     
+<form class="row g-3 mb-4" method="post" id="buscarClienteForm">
+    {% csrf_token %} 
+    <div class="col-auto">
+        <label for="cpfInput" class="visually-hidden">CPF do Cliente</label>
+        <input type="text" class="form-control" id="cpfInput" name="cpf" placeholder="Digite o CPF">
+    </div>
+    <div class="col-auto">
+        <button type="submit" name="buscar" class="btn btn-primary">Buscar Cliente</button>
+    </div>
+        <div class="col-auto">
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#clienteModal">
+            +
+        </button>
+    </div>
+</form> 
+
+
+{% include 'add_cliente_modal.html' %}
+
+
+{% if cliente %}
+    <!-- Dados do cliente -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Cliente encontrado: {{ cliente.cpf }}</h5>
+        <p><strong>Nome:</strong> {{ cliente.nome }}</p>
+        <p><strong>Telefone:</strong> {{ cliente.telefone }}</p>
+        <p><strong>Email:</strong> {{ cliente.email }}</p>
+        <p><strong>Endereço:</strong> {{ cliente.endereco }}</p>
+      </div>
+    </div>
+
+    <!-- Lista de animais --> 
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="card-title mb-0">Pets</h5>
+        <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#animalModal">
+            + Adicionar Pet
+        </button>
+    </div> 
+    {% if animais %}
+    <ul class="list-unstyled" id="animalList">
+        {% for animal in animais %} 
+            <li class="list-group-item">
+                <strong>{{ animal.nome }}</strong> / {{ animal.raca }}
+                <button type="button" class="btn btn-info btn-sm select-animal-btn" data-animal-id="{{ animal.id }}">Selecionar</button>
+            </li> 
+        {% endfor %}
+    </ul>
+    {% else %}
+    <ul class="list-unstyled" id="animalList">
+        <p class="text-muted">Nenhum animal cadastrado para este cliente.</p>
+    </ul>
+    {% endif %}
+    <hr>
+     
+    <form method="POST">
+        {% csrf_token %} 
+        {{ form.as_p }}
+        <button type="submit" name="salvar" class="btn btn-primary">Agendar</button>
+        {% comment %} <a href="{% url 'lista_consultas' %}" class="btn btn-secondary">Cancelar</a> {% endcomment %}
+    </form> 
+
+{% endif %}
+
+{% include 'add_animal_modal.html' %}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+ <script>
+    $(document).ready(function() {
+        $('.select-animal-btn').click(function() {
+            var animalId = $(this).data('animal-id');
+            $('#id_animal').val(animalId);  // Define o valor do campo oculto
+            alert('Animal selecionado com ID: ' + animalId);
+        });
+    }); 
+
+    $('#animalModal').on('show.bs.modal', function () {
+        $('#modalContent').load("{% url 'add_animal' %}");
+    });
+
+ </script>
+ 
+{% endblock %}
+

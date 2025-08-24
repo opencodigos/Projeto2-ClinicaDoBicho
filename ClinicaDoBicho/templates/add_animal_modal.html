@@ -1,0 +1,48 @@
+
+<div class="modal fade" id="animalModal"tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content" id="modalContent">
+      <div class="modal-header">
+        <h5 class="modal-title">Add Pet</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="animalForm">
+            {% csrf_token %}
+            {{ form_pet.as_p }}
+            <input type="hidden" name="cpf" value="{{ cliente.cpf }}">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+        </form> 
+      </div> 
+    </div>
+  </div>
+</div> 
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$('#animalForm').submit(function(e){
+    e.preventDefault();
+    $.ajax({
+        url: "/add_animal/",
+        method: "POST",
+        data: $(this).serialize(),
+        success: function(data){
+            // fecha modal
+            $('#animalModal').modal('hide');
+            // adiciona novo animal na lista
+            let html_option = `<li class="list-group-item">
+                <strong>${data.nome}</strong>
+                <button type="button" class="btn btn-info btn-sm select-animal-btn" data-animal-id="${data.id}">Selecionar</button>
+            </li>`;
+            $('#animalList').append(html_option);
+
+            let newOption = new Option(data.nome, data.id, true, true);
+            $('#id_animal').append(newOption).trigger('change');
+        },
+        error: function(xhr){
+            alert('Erro ao adicionar animal');
+        }
+    });
+});
+</script>

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+    <h1 class="mb-4">Lista de Animais</h1>
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Nome</th>
+                <th>Espécie</th>
+                <th>Raça</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for animal in animais %}
+            <tr>
+                <td>{{ animal.nome }}</td>
+                <td>{{ animal.get_especie_display }}</td>
+                <td>{{ animal.raca }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="text-center">Nenhum animal cadastrado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
