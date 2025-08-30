@@ -31,16 +31,14 @@ class ConsultaForm(forms.ModelForm):
     class Meta:
         model = Consulta
         fields = ['animal', 'veterinario', 'data', 'motivo', 'observacoes']
-        widgets = {
+        widgets = { 
             'data': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
             'motivo': forms.TextInput(attrs={'class': 'form-control'}),
             'observacoes': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
         }
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.fields['animal'].disabled = True
+        super().__init__(*args, **kwargs) 
 
         for field in self.fields.values():
             field.widget.attrs.update({'class': 'form-control'})

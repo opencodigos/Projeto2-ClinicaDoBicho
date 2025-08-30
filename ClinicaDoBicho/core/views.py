@@ -99,6 +99,7 @@ def agendar_consulta(request):
         # botão salvar consulta
         elif "salvar" in request.POST:
             form = ConsultaForm(request.POST)
+            print(request.POST)
             if form.is_valid():
                 form.save()
                 messages.success(request, 'Consulta agendada com sucesso!')
@@ -135,4 +136,55 @@ def consulta_eventos(request):
             "color": "#" + "".join([random.choice("0123456789ABCDEF") for _ in range(6)])
         })
     print(eventos)
+    return JsonResponse(eventos, safe=False)
+
+
+@login_required(login_url="login")
+def consulta_eventos_veterinario(request):
+    from datetime import datetime, timedelta
+
+    veterinario_id = request.GET.get("veterinario")
+    if not veterinario_id:
+        return JsonResponse([], safe=False)
+
+    # Consultas agendadas já no formato necessário
+    consultas = (
+        Consulta.objects.filter(veterinario_id=veterinario_id)
+        .select_related("animal", "veterinario")
+    )
+
+    consultas_dict = {
+        c.data.strftime("%Y-%m-%d-%H"): c.id for c in consultas
+    }
+
+    eventos = [
+        {
+            "id": c.id,
+            "title": f"{c.animal.nome} - {c.veterinario.nome}",
+            "start": c.data.strftime("%Y-%m-%dT%H:%M:%S"),
+            "color": "#dc3545",  # vermelho
+        }
+        for c in consultas
+    ]
+
+    hoje = datetime.now().date()
+    horarios = [8, 9, 10, 11, 13, 14, 15, 16]
+
+    for i in range(7): 
+        data = hoje + timedelta(days=i)
+        if data.weekday() >= 5:
+            continue 
+
+        for hora in horarios:
+            key = f"{data.strftime('%Y-%m-%d')}-{hora}"
+            if key not in consultas_dict:
+                slot_inicio = datetime.combine(data, datetime.min.time().replace(hour=hora))
+                eventos.append(
+                    {
+                        "id": f"disp-{data}-{hora}",
+                        "title": "Disponível",
+                        "start": slot_inicio.strftime("%Y-%m-%dT%H:%M:%S"),
+                        "color": "#28a745",  # verde
+                    }
+                ) 
     return JsonResponse(eventos, safe=False)
