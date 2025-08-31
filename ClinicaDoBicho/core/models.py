@@ -27,10 +27,15 @@ class Animal(models.Model):
     dono = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='animais')
 
     def __str__(self):
-        return f"{self.nome} ({self.especie})"
+        return f"{self.nome} ({self.especie})" 
+
+    @property
+    def get_tipo_especie(self):
+        return dict(self.ESPECIES).get(self.especie, 'Desconhecido')
 
 # Cadastro de Doutores
 class MedicoVeterinario(models.Model):
+    # nome da especie
     nome = models.CharField(max_length=100)
     crmv = models.CharField(max_length=20)
     especialidade = models.CharField(max_length=100)

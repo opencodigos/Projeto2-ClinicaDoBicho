@@ -18,9 +18,30 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path, include
+ 
+from rest_framework import routers
+
+from api.auth import MyTokenObtainPairView
+
+from api.views import (
+    ClienteViewSet, 
+    AnimalViewSet, 
+    MedicoVeterinarioViewSet, 
+    ConsultaViewSet
+)
+
+router = routers.DefaultRouter()
+router.register(r'clientes', ClienteViewSet, basename='cliente')
+router.register(r'animais', AnimalViewSet, basename='animal')
+router.register(r'veterinarios', MedicoVeterinarioViewSet, basename='veterinario')
+router.register(r'consultas', ConsultaViewSet, basename='consulta') 
 
 urlpatterns = [
     path('admin/', admin.site.urls), 
+    path('api/', include(router.urls)),
+
+    path('api/login/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
+
     path('', include('core.urls')),
 ] 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
