@@ -1,9 +1,5 @@
-# Django
-*.pyc
-__pycache__/
-.venv
-
-# Angular / Ionic
+# Specifies intentionally untracked files to ignore when using Git
+# http://git-scm.com/docs/gitignore
 
 *~
 *.sw[mnpcod]

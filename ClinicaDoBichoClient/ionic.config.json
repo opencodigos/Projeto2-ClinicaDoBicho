@@ -1,0 +1,7 @@
+{
+  "name": "ClinicaDoBichoClient",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
