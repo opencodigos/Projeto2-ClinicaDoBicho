@@ -32,7 +32,7 @@ def logout_view(request):
 @login_required(login_url='login')
 def lista_animais(request):
     animais = Animal.objects.all() # Obtém todos os animais
-    print(animais) 
+    # print(animais) 
     return render(request, 'lista_animais.html', {'animais': animais})
 
 
@@ -43,7 +43,7 @@ def add_animal(request):
         if form.is_valid():
             animal = form.save(commit=False) 
             cpf = request.POST.get("cpf")
-            print(cpf)
+            # print(cpf)
             animal.dono = Cliente.objects.get(cpf=cpf) 
             animal.save()
             return JsonResponse({'id': animal.id, 'nome': animal.nome})
@@ -86,11 +86,11 @@ def agendar_consulta(request):
         # botão buscar cliente
         if "buscar" in request.POST:
             cpf = request.POST.get("cpf")
-            print(cpf)
+            # print(cpf)
             try:
                 cliente = Cliente.objects.get(cpf=cpf)
                 animais = cliente.animais.all()
-                print(cliente, animais)
+                # print(cliente, animais)
                 form = ConsultaForm() 
             except Cliente.DoesNotExist:
                 messages.error(request, "Cliente não encontrado.")
@@ -99,7 +99,7 @@ def agendar_consulta(request):
         # botão salvar consulta
         elif "salvar" in request.POST:
             form = ConsultaForm(request.POST)
-            print(request.POST)
+            # print(request.POST)
             if form.is_valid():
                 form.save()
                 messages.success(request, 'Consulta agendada com sucesso!')
@@ -135,7 +135,7 @@ def consulta_eventos(request):
             "start": c.data.strftime("%Y-%m-%dT%H:%M:%S"),
             "color": "#" + "".join([random.choice("0123456789ABCDEF") for _ in range(6)])
         })
-    print(eventos)
+    # print(eventos)
     return JsonResponse(eventos, safe=False)
 
 
