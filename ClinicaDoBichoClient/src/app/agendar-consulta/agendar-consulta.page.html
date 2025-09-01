@@ -1,0 +1,68 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Agendar Consulta</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" fullscreen>
+
+  <form (ngSubmit)="agendar()" class="agendar-form">
+
+    <ion-item>
+      <ion-label position="floating">Animal</ion-label>
+      <!-- <ion-input [(ngModel)]="consulta.animal.nome" name="animal" required></ion-input> -->
+
+      <ion-select [(ngModel)]="consulta.animal" name="animal" required>
+        @for (animal of animais; track animal.id) {
+          <ion-select-option [value]="animal.id">
+            {{ animal.nome }}
+          </ion-select-option>
+        }
+      </ion-select>
+
+
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Veterinário</ion-label>
+      <!-- <ion-input [(ngModel)]="consulta.veterinario.nome" name="veterinario" required></ion-input> -->
+
+      <ion-select [(ngModel)]="consulta.veterinario" name="veterinario" required>
+        @for (veterinario of veterinarios; track veterinario.id) {
+          <ion-select-option [value]="veterinario.id">
+            {{ veterinario.nome }}
+          </ion-select-option>
+        }
+      </ion-select>
+
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Data e Hora</ion-label>
+      <ion-datetime
+        [(ngModel)]="consulta.data"
+        name="data"
+        display-format="DD/MM/YYYY HH:mm"
+        picker-format="DD/MM/YYYY HH:mm"
+        required>
+      </ion-datetime>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Motivo</ion-label>
+      <ion-input [(ngModel)]="consulta.motivo" name="motivo" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Observações</ion-label>
+      <ion-textarea [(ngModel)]="consulta.observacoes" name="observacoes"></ion-textarea>
+    </ion-item>
+
+    <ion-button expand="block" color="success" shape="round" type="submit">
+      <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+      Agendar
+    </ion-button>
+
+  </form>
+
+</ion-content>

@@ -2,18 +2,33 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+export interface Cliente {
+  id?: number;
+  nome: string;
+  cpf: string;
+}
+
 export interface Animal {
   id?: number;
   nome: string;
+  tipo_especie: string;
   especie: string;
   raca: string;
   idade: number;
+  peso: number;
+  dono: Cliente
+}
+
+export interface Veterinario {
+  id?: number;
+  nome: string;
+  especialidade: string;
 }
 
 export interface Consulta {
   id?: number;
   animal: Animal;
-  veterinario: number;
+  veterinario: Veterinario;
   data: string;
   motivo: string;
   observacoes?: string;
@@ -34,12 +49,20 @@ export class ApiService {
   }
 
   // pegar consultas
-  getConsultas(): Observable<Consulta[]> {
+  listConsultas(): Observable<Consulta[]> {
     return this.http.get<Consulta[]>(`${this.baseUrl}/consultas/`);
   }
 
   // criar consulta
   agendarConsulta(consulta: Consulta): Observable<Consulta> {
     return this.http.post<Consulta>(`${this.baseUrl}/consultas/`, consulta);
+  }
+
+  listAnimais(): Observable<Animal[]> {
+    return this.http.get<Animal[]>(`${this.baseUrl}/animais/`);
+  }
+
+  listVeterinarios(): Observable<Veterinario[]> {
+    return this.http.get<Veterinario[]>(`${this.baseUrl}/veterinarios/`);
   }
 }

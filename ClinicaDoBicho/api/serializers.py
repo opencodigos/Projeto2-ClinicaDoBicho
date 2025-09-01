@@ -29,9 +29,23 @@ class MedicoVeterinarioSerializer(serializers.ModelSerializer):
         model = MedicoVeterinario
         fields = '__all__'
 
+
 class ConsultaSerializer(serializers.ModelSerializer):
     animal = AnimalSerializer(read_only=True)
     veterinario = MedicoVeterinarioSimpleSerializer(read_only=True)
+
+    class Meta:
+        model = Consulta
+        fields = '__all__' 
+
+
+class ConsultaAddSerializer(serializers.ModelSerializer):
+    animal = serializers.PrimaryKeyRelatedField(
+        queryset=Animal.objects.all(), write_only=True
+    )
+    veterinario = serializers.PrimaryKeyRelatedField(
+        queryset=MedicoVeterinario.objects.all(), write_only=True
+    )
 
     class Meta:
         model = Consulta

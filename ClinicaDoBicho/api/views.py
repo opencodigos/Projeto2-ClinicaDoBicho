@@ -3,7 +3,8 @@ from core.models import Cliente, Animal, MedicoVeterinario, Consulta
 from .serializers import (ClienteSerializer, 
                           AnimalSerializer,     
                           MedicoVeterinarioSerializer, 
-                          ConsultaSerializer) 
+                          ConsultaSerializer,
+                          ConsultaAddSerializer) 
 
 class ClienteViewSet(viewsets.ModelViewSet):
     queryset = Cliente.objects.all()
@@ -19,4 +20,9 @@ class MedicoVeterinarioViewSet(viewsets.ModelViewSet):
 
 class ConsultaViewSet(viewsets.ModelViewSet):
     queryset = Consulta.objects.all()
-    serializer_class = ConsultaSerializer
+    serializer_class = ConsultaSerializer 
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return ConsultaAddSerializer
+        return ConsultaSerializer
