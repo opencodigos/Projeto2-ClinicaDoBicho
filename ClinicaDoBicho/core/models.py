@@ -63,4 +63,5 @@ class Consulta(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Consulta de {self.animal.nome} com {self.veterinario.nome} em {self.data}"
+        veterinario = self.veterinario.nome if self.veterinario else 'desconhecido'
+        return f"Consulta de {self.animal.nome} com {veterinario} em {self.data}"
