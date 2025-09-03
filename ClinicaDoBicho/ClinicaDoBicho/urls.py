@@ -21,7 +21,10 @@ from django.urls import path, include
  
 from rest_framework import routers
 
-from api.auth import MyTokenObtainPairView
+from api.auth import (
+    MyTokenObtainPairView, 
+    MyTokenRefreshView
+)
 
 from api.views import (
     ClienteViewSet, 
@@ -41,6 +44,7 @@ urlpatterns = [
     path('api/', include(router.urls)),
 
     path('api/login/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/auth/refresh/', MyTokenRefreshView.as_view(), name='token_refresh'),
 
     path('', include('core.urls')),
 ] 

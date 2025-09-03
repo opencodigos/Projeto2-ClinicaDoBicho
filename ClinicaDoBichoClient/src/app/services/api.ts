@@ -50,6 +50,8 @@ export class ApiService {
 
   // pegar consultas
   listConsultas(): Observable<Consulta[]> {
+    console.log('ApiService: Método getConsultas() chamado. Fazendo requisição GET...');
+ 
     return this.http.get<Consulta[]>(`${this.baseUrl}/consultas/`);
   }
 
