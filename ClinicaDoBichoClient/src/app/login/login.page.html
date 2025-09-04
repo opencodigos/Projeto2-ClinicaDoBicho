@@ -1,25 +1,42 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>Login</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content class="login-content" scroll-y="false">
 
-<ion-content class="ion-padding">
-  <form (ngSubmit)="login()" class="login-form">
+  <ion-grid class="login-grid">
+    <ion-row class="login-row">
+      <ion-col size="12" class="login-col">
 
-    <ion-item>
-      <ion-label position="floating">Usuário</ion-label>
-      <ion-input [(ngModel)]="username" name="username" required></ion-input>
-    </ion-item>
+        <!-- Logo -->
+        <div class="logo-container">
+          <img src="../../assets/logo.png" alt="Logo" />
+          <h2 class="clinic-name">Clínica Do Bico</h2>
+        </div>
 
-    <ion-item>
-      <ion-label position="floating">Senha</ion-label>
-      <ion-input [(ngModel)]="password" name="password" type="password" required></ion-input>
-    </ion-item>
+        <form (ngSubmit)="login()" class="login-form">
 
-    <ion-button expand="block" type="submit" class="login-button">
-      Entrar
-    </ion-button>
+          <ion-item>
+            <ion-icon name="person-outline" slot="start"></ion-icon>
+            <ion-label position="floating">Usuário</ion-label>
+            <ion-input [(ngModel)]="username" name="username" required></ion-input>
+          </ion-item>
 
-  </form>
+          <ion-item>
+            <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+            <ion-label position="floating">Senha</ion-label>
+            <ion-input [(ngModel)]="password" name="password" type="password" required></ion-input>
+          </ion-item>
+
+          <ion-button expand="block" type="submit" class="login-button">
+            Entrar
+          </ion-button>
+
+        </form>
+
+        <div class="login-footer">
+          <p>@OpenCodgo</p>
+        </div>
+
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
 </ion-content>
+

@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { StorageService } from './storage';
+import { jwtDecode } from 'jwt-decode';
+import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -9,11 +11,16 @@ export class AuthService {
   private accessTokenKey = 'access_token';
   private refreshTokenKey = 'refresh_token';
 
-  constructor(private http: HttpClient, private storage: StorageService) {}
+  constructor(private http: HttpClient, private storage: StorageService, private router: Router,) {}
 
   // Pega token
   async getAccessToken() {
     return await this.storage.get(this.accessTokenKey);
+  }
+
+  // Pega token refresh
+  async getRefreshToken() {
+    return await this.storage.get(this.refreshTokenKey)
   }
 
   // Salva tokens
@@ -28,9 +35,52 @@ export class AuthService {
     return this.http.post<any>(`${this.apiUrl}/auth/refresh/`, { refresh });
   }
 
-  // Logout deixa ele aqui depois vamos usar.
+
+
+  // Logout
   async logout() {
+    const refreshToken = await this.getRefreshToken();
+
+    if (refreshToken) {
+      // Envia o refresh token para a blacklist no servidor
+      this.http.post(`${this.apiUrl}/auth/logout/`, { refresh: refreshToken } ).subscribe({
+        next: () => {
+          console.log('Token invalidado no servidor com sucesso.');
+        },
+        error: (err) => {
+          console.error('Erro ao invalidar token no servidor:', err);
+        },
+        complete: async () => {
+          // Limpa os tokens do storage local independentemente do resultado
+          await this.clearTokens();
+          this.router.navigate(['/login']);
+
+        }
+      });
+    } else {
+      // Se não houver token, apenas limpa o storage
+      await this.clearTokens();
+
+      // Redireciona
+      this.router.navigate(['/login']);
+    }
+  }
+
+  // Método auxiliar para limpar os tokens
+  private async clearTokens(): Promise<void> {
     await this.storage.remove(this.accessTokenKey);
     await this.storage.remove(this.refreshTokenKey);
   }
+
+  async getUserProfile(): Promise<any | null> {
+    const token = await this.getAccessToken();
+    if (!token) { // True
+      return null;
+    }
+    // Decodifica o token para pegar as informações (payload)
+    const decodedToken: any = jwtDecode(token);
+    return { username: decodedToken.username }; // Retorna o username
+  }
+
+
 }

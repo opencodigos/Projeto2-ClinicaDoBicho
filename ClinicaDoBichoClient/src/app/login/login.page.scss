@@ -1,10 +1,101 @@
-.login-form {
+.login-content {
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --padding-start: 0;
+  --padding-end: 0;
+  --overflow: hidden;
+}
+
+.login-grid {
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+}
+
+.login-row {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+}
+
+.login-col {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  margin-top: 40px;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  max-width: 400px;
+}
+
+.logo-container {
+  text-align: center;
+  margin-bottom: 30px;
+
+  img {
+    width: 100px;
+    height: 100px;
+    background: #fff;
+    border-radius: 50%;
+    border: 3px solid #60b12a;
+    box-shadow: 0 4px 15px rgba(45, 80, 22, 0.3);
+    padding: 5px;
+    display: block;
+    margin: 0 auto 15px auto;
+  }
+}
+
+.clinic-name {
+  color: #2d5016;
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+  text-align: center;
+}
+
+.login-form {
+  width: 100%;
+  max-width: 350px;
+}
+
+ion-item {
+  --background: rgba(255, 255, 255, 0.9);
+  --border-radius: 12px;
+  --highlight-color-focused: #2d5016;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+}
+
+ion-icon {
+  color: #2d5016;
+  margin-right: 12px;
+  font-size: 20px;
+}
+
+ion-label {
+  color: #2d5016 !important;
+  font-weight: 500;
 }
 
 .login-button {
-  margin-top: 20px;
+  margin-top: 25px;
+  --background: #59a128;
+  --background-activated: #339b52;
+  --border-radius: 12px;
+  font-weight: 600;
+  height: 50px;
+  font-size: 16px;
+  text-transform: uppercase;
 }
+
+.login-footer {
+  text-align: center;
+  font-size: 14px;
+  margin-top: 25px;
+  font-weight: 600;
+  color: #666;
+}
+

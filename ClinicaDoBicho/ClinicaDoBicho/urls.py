@@ -23,7 +23,8 @@ from rest_framework import routers
 
 from api.auth import (
     MyTokenObtainPairView, 
-    MyTokenRefreshView
+    MyTokenRefreshView,
+    LogoutView
 )
 
 from api.views import (
@@ -45,6 +46,7 @@ urlpatterns = [
 
     path('api/login/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/auth/refresh/', MyTokenRefreshView.as_view(), name='token_refresh'),
+    path('api/auth/logout/', LogoutView.as_view(), name='token_logout'),
 
     path('', include('core.urls')),
 ] 

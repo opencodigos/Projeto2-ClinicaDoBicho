@@ -17,6 +17,7 @@ export const tokenInterceptor: HttpInterceptorFn = (req, next ) => {
   // Para todas as outras rotas, adiciona o token.
   return from(authService.getAccessToken()).pipe(
     switchMap(accessToken => {
+      console.log("token", accessToken)
       // Se não houver token, não há o que fazer, apenas continue.
       if (!accessToken) {
         return next(req);
