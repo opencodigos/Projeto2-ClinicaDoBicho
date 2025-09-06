@@ -126,6 +126,17 @@ REST_FRAMEWORK = {
     )
 }
 
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),   # token válido por 1 hora
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),   # refresh válido por 7 dias
+    'ROTATE_REFRESH_TOKENS': True,                 # gera refresh novo ao renovar
+    'BLACKLIST_AFTER_ROTATION': True,              # invalida refresh antigo
+    'AUTH_HEADER_TYPES': ('Bearer',),              # cabeçalho Authorization: Bearer <token>
+}
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 

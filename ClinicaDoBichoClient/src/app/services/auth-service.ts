@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { StorageService } from './storage';
 import { jwtDecode } from 'jwt-decode';
 import { Router } from '@angular/router';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -30,12 +31,19 @@ export class AuthService {
   }
 
   // Renova access token usando refresh token
-  async refreshToken() {
-    const refresh = await this.storage.get(this.refreshTokenKey);
-    return this.http.post<any>(`${this.apiUrl}/auth/refresh/`, { refresh });
+  async refreshToken(): Promise<any> {
+    const refresh = await this.storage.get(this.refreshTokenKey); 
+
+    const refreshObservable = this.http.post<any>(`${this.apiUrl}/auth/refresh/`, { refresh } );
+
+    console.log('[AuthService] Refresh token atual:', refresh);
+    console.log('[AuthService] refreshObservable:', refreshObservable);
+
+    // lastValueFrom transforma o Observable em uma Promise
+    return await lastValueFrom(refreshObservable);
   }
 
-
+  // Promise<<...>>
 
   // Logout
   async logout() {
