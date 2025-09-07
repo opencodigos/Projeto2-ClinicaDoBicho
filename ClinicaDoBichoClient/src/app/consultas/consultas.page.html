@@ -1,24 +1,43 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>Consultas</ion-title>
+  <ion-toolbar class="custom-toolbar">
+    <ion-title>Minhas Consultas</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-list>
-    <ion-card class="consulta-card">
-      @for (item of consultas; track $index) {
+  <ion-segment [(ngModel)]="filtroStatus" (ionChange)="filtrarConsultas()">
+    <ion-segment-button value="todas"><ion-label>Todas</ion-label></ion-segment-button>
+    <ion-segment-button value="agendada"><ion-label>Agendadas</ion-label></ion-segment-button>
+    <ion-segment-button value="concluida"><ion-label>Concluídas</ion-label></ion-segment-button>
+  </ion-segment>
+
+  @if (consultasFiltradas.length === 0) {
+    <div class="sem-consultas">
+      <ion-icon name="calendar-outline"></ion-icon>
+      <h3>Nenhuma consulta encontrada</h3>
+      <p>Você não possui consultas {{ filtroStatus !== 'todas' ? 'com este status' : '' }}</p>
+    </div>
+  }
+
+  <div class="consultas-grid">
+    @for (consulta of consultasFiltradas; track $index) {
+    <ion-card class="consulta-card" [ngClass]="'status-' + (consulta.status || 'agendada').toLowerCase()">
+      <div class="status-indicator">
+        <ion-badge color="light" style="color:#60b12a">{{ getStatusText(consulta.status) }}</ion-badge>
+      </div>
       <ion-card-header>
-        <ion-card-subtitle>{{ item.data | date:'short' }}</ion-card-subtitle>
-        <ion-card-title>Cliente: {{ item.animal.dono.nome }}</ion-card-title>
+        <ion-card-subtitle>
+          <ion-icon name="calendar-outline"></ion-icon>
+          {{ consulta.data | date:'dd/MM/yyyy HH:mm' }}
+        </ion-card-subtitle>
+        <ion-card-title class="pet-nome">{{ consulta.animal.nome }}</ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <p>Nome do Pet: {{ item.animal.nome }}</p>
-        <p>Tipo de Espécie: {{ item.animal.tipo_especie }}</p>
-        <p>Veterinario: {{ item.veterinario.nome }}</p>
-        <p>Status: NONE</p>
+        <div class="info-row"><ion-icon name="person-outline"></ion-icon>{{ consulta.animal.dono.nome }}</div>
+        <div class="info-row"><ion-icon name="paw-outline"></ion-icon>{{ consulta.animal.tipo_especie }}</div>
+        <div class="info-row"><ion-icon name="medkit-outline"></ion-icon>Dr(a). {{ consulta.veterinario.nome }}</div>
       </ion-card-content>
-      }
     </ion-card>
-  </ion-list>
+    }
+  </div>
 </ion-content>

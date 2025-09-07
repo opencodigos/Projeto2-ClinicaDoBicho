@@ -22,6 +22,7 @@ export interface Animal {
 export interface Veterinario {
   id?: number;
   nome: string;
+  crmv: string;
   especialidade: string;
 }
 
@@ -32,6 +33,7 @@ export interface Consulta {
   data: string;
   motivo: string;
   observacoes?: string;
+  status: string;
 }
 
 @Injectable({
@@ -51,7 +53,7 @@ export class ApiService {
   // pegar consultas
   listConsultas(): Observable<Consulta[]> {
     console.log('ApiService: Método getConsultas() chamado. Fazendo requisição GET...');
- 
+
     return this.http.get<Consulta[]>(`${this.baseUrl}/consultas/`);
   }
 

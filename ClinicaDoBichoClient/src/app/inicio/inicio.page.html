@@ -1,14 +1,39 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar class="custom-toolbar">
     <ion-title>Bem-vindo(a)!</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <div class="welcome-card">
+
+  <!-- Boas-vindas -->
+  <div class="welcome-card" style="text-align:center; margin-bottom: 30px;">
     @if (username) {
-      <h1>Olá, {{ username }}!</h1>
+      <h1 style="font-size: 2rem; margin-bottom: 10px;">Olá, {{ username }}!</h1>
     }
     <p>Que bom te ver por aqui. O que você gostaria de fazer hoje?</p>
   </div>
+
+  <!-- Grid centralizado -->
+  <ion-grid class="simple-grid">
+    <ion-row class="ion-justify-content-center" style="flex-direction: column; gap: 15px;">
+      <ion-col size="auto" class="grid-item">Agendadas: 3</ion-col>
+      <ion-col size="auto" class="grid-item">Concluídas: 5</ion-col>
+      <ion-col size="auto" class="grid-item">Canceladas: 1</ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <!-- Espaço flexível -->
+  <div style="flex: 1;"></div>
+
+  <!-- Banner de dica no bottom -->
+  <ion-card class="banner-card" style="position: absolute; bottom: 20px; left: 10px; right: 10px;">
+    <ion-card-header>
+      <ion-card-title>Dica do Dia</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      Não se esqueça de vacinar seu pet no mês correto!
+    </ion-card-content>
+  </ion-card>
+
 </ion-content>

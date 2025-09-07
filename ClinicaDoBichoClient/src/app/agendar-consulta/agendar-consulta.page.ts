@@ -14,13 +14,17 @@ import {
   IonTextarea,
   IonDatetime,
   IonSelectOption,
-  IonSelect} from '@ionic/angular/standalone';
+  IonSelect,
+  ModalController, IonAvatar
+} from '@ionic/angular/standalone';
 
 import { ApiService, Consulta, Animal, Veterinario } from '../services/api';
 import { Router } from '@angular/router';
 
 import { addIcons } from 'ionicons';
 import { checkmarkCircleOutline } from 'ionicons/icons';
+import { ListaAnimaisModal } from './lista-animais-modal';
+import { ListaVeterinariosModal } from './lista-veterinario-modal';
 
 @Component({
   selector: 'app-agendar-consulta',
@@ -42,7 +46,8 @@ import { checkmarkCircleOutline } from 'ionicons/icons';
     IonTextarea,
     IonDatetime,
     IonSelect,
-    IonSelectOption
+    IonSelectOption,
+    IonAvatar
   ]
 })
 export class AgendarConsultaPage {
@@ -52,7 +57,8 @@ export class AgendarConsultaPage {
     veterinario: {} as Veterinario,
     data: new Date().toISOString(),
     motivo: '',
-    observacoes: ''
+    observacoes: '',
+    status: ''
   };
 
   animais: Animal[] = [];
@@ -62,7 +68,11 @@ export class AgendarConsultaPage {
   minDate = new Date().toISOString();
   maxDate = new Date(new Date().setDate(new Date().getDate() + 30)).toISOString();
 
-  constructor(private api: ApiService, private router: Router) {
+  // Modal
+  animalSelecionado: any = null;
+  veterinarioSelecionado: any = null;
+
+  constructor(private api: ApiService, private router: Router, private modalCtrl: ModalController) {
     addIcons({ checkmarkCircleOutline });
   }
 
@@ -70,6 +80,50 @@ export class AgendarConsultaPage {
     this.listAnimais();
     this.listVeterinarios();
   }
+
+  // Modal Lista de Animais
+ async abrirModalAnimais() {
+    // tira foco de qualquer botão/input ativo da tela
+    (document.activeElement as HTMLElement)?.blur();
+
+    const modal = await this.modalCtrl.create({
+      component: ListaAnimaisModal,
+      componentProps: {
+        animais: this.animais
+      }
+    });
+
+    modal.onDidDismiss().then((result) => {
+      if (result.data) {
+        console.log('Animal selecionado:', result.data);
+        this.animalSelecionado = result.data;
+      }
+    });
+
+    return await modal.present();
+  }
+
+  async abrirModalVeterinarios() {
+    // tira foco de qualquer botão/input ativo da tela
+    (document.activeElement as HTMLElement)?.blur();
+
+    const modal = await this.modalCtrl.create({
+      component: ListaVeterinariosModal,
+      componentProps: {
+        veterinarios: this.veterinarios
+      }
+    });
+    await modal.present();
+
+     modal.onDidDismiss().then((result) => {
+      if (result.data) {
+        console.log('Veterinario selecionado:', result.data);
+        this.veterinarioSelecionado = result.data;
+      }
+    });
+
+  }
+
 
   agendar() {
 
@@ -123,5 +177,5 @@ export class AgendarConsultaPage {
     });
   }
 
-} 
+}
 

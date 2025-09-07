@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar class="custom-toolbar">
     <ion-title>Agendar Consulta</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -8,33 +8,24 @@
 
   <form (ngSubmit)="agendar()" class="agendar-form">
 
-    <ion-item>
-      <ion-label position="floating">Animal</ion-label>
-      <!-- <ion-input [(ngModel)]="consulta.animal.nome" name="animal" required></ion-input> -->
-
-      <ion-select [(ngModel)]="consulta.animal" name="animal" required>
-        @for (animal of animais; track animal.id) {
-          <ion-select-option [value]="animal.id">
-            {{ animal.nome }}
-          </ion-select-option>
-        }
-      </ion-select>
-
-
+    <!-- Seleção de Animal -->
+    <ion-item button (click)="abrirModalAnimais()" class="form-item">
+      <ion-avatar slot="start">
+        <img [src]="animalSelecionado?.foto || 'https://placehold.co/400'">
+      </ion-avatar>
+      <ion-label>
+        {{ animalSelecionado?.nome || 'Selecione o Pet' }}
+      </ion-label>
     </ion-item>
 
-    <ion-item>
-      <ion-label position="floating">Veterinário</ion-label>
-      <!-- <ion-input [(ngModel)]="consulta.veterinario.nome" name="veterinario" required></ion-input> -->
-
-      <ion-select [(ngModel)]="consulta.veterinario" name="veterinario" required>
-        @for (veterinario of veterinarios; track veterinario.id) {
-          <ion-select-option [value]="veterinario.id">
-            {{ veterinario.nome }}
-          </ion-select-option>
-        }
-      </ion-select>
-
+    <!-- Seleção de Veterinário -->
+    <ion-item button (click)="abrirModalVeterinarios()" class="form-item">
+      <ion-avatar slot="start">
+        <img [src]="veterinarioSelecionado?.foto || 'https://placehold.co/400'">
+      </ion-avatar>
+      <ion-label>
+        {{ veterinarioSelecionado?.nome || 'Selecione o veterinário' }}
+      </ion-label>
     </ion-item>
 
     <ion-item>
@@ -58,7 +49,7 @@
       <ion-textarea [(ngModel)]="consulta.observacoes" name="observacoes"></ion-textarea>
     </ion-item>
 
-    <ion-button expand="block" color="success" shape="round" type="submit">
+    <ion-button expand="block" class="custom-button" shape="round" type="submit">
       <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
       Agendar
     </ion-button>

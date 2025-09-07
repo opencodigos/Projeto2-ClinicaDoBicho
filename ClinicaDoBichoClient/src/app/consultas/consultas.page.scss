@@ -1,0 +1,77 @@
+.consultas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .consulta-card {
+    margin: 0;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    overflow: hidden;
+    transition: transform .2s;
+    background: #fff;
+
+    &:hover { transform: translateY(-4px); }
+
+    .status-indicator {
+      position: absolute;
+      top: 8px; right: 8px;
+    }
+
+    ion-card-header {
+      ion-card-subtitle {
+        font-size: 14px;
+        font-weight: 600;
+        color: #60b12a;
+        display: flex; align-items: center;
+
+        ion-icon { margin-right: 6px; }
+      }
+      .pet-nome {
+        font-size: 18px;
+        font-weight: 700;
+        margin-top: 2px;
+      }
+    }
+
+    ion-card-content {
+      .info-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 6px;
+        color: #555;
+
+        ion-icon {
+          margin-right: 8px;
+          color: #60b12a;
+        }
+      }
+    }
+  }
+
+  .status-agendada   { border-left: 4px solid #60b12a; }
+  .status-concluida  { border-left: 4px solid #2ecc71; }
+  .status-cancelada  { border-left: 4px solid #e74c3c; }
+
+  .sem-consultas {
+    text-align: center;
+    padding: 40px 0;
+    color: #666;
+
+    ion-icon { font-size: 48px; color: #bbb; margin-bottom: 12px; }
+    h3 { font-size: 18px; margin: 0; color: #333; }
+    p  { margin-top: 6px; }
+  }
+
+  ion-segment {
+    margin-bottom: 16px;
+    border-radius: 8px;
+    padding: 4px;
+
+    ion-segment-button {
+      min-height: 36px;
+      --border-radius: 6px;
+    }
+  }

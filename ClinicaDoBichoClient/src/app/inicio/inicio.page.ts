@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonIcon } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonIcon, IonRow, IonGrid, IonCol, IonCard, IonCardHeader, IonCardTitle, IonCardContent } from '@ionic/angular/standalone';
 import { AuthService } from '../services/auth-service';
 
 @Component({
@@ -11,11 +11,18 @@ import { AuthService } from '../services/auth-service';
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,  
+    FormsModule,
     IonContent,
     IonHeader,
     IonTitle,
     IonToolbar,
+    IonCardContent,
+    IonCardTitle,
+    IonCardHeader,
+    IonCard,
+    IonCol,
+    IonGrid,
+    IonRow
     ]
 })
 export class InicioPage implements OnInit {
