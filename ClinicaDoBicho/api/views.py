@@ -18,6 +18,12 @@ class AnimalViewSet(viewsets.ModelViewSet):
     serializer_class = AnimalSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_staff:
+            return Animal.objects.all()
+        return Animal.objects.filter(dono__usuario=user)
+
 
 class MedicoVeterinarioViewSet(viewsets.ModelViewSet):
     queryset = MedicoVeterinario.objects.all()
@@ -33,4 +39,11 @@ class ConsultaViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == 'create':
             return ConsultaAddSerializer
-        return ConsultaSerializer
+        return ConsultaSerializer 
+    
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_staff:
+            return Consulta.objects.all()
+        return Consulta.objects.filter(animal__dono__usuario=user)
+        

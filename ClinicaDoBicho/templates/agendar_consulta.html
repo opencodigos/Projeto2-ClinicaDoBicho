@@ -209,6 +209,7 @@
                     
                     // Selecionar a data
                     const dataFormatada = info.date.toISOString().slice(0, 16).replace('T', ' ');
+                    
                     document.querySelector('[name="data"]').value = dataFormatada;
                     $('#dataDoctorModal').modal('hide');
                 },
@@ -216,7 +217,23 @@
                 eventClick: function(info) {
                     if (info.event.title === "Disponível") {
                         // Selecionar horário disponível
-                        const dataFormatada = info.event.start.toISOString().slice(0, 16).replace('T', ' ');
+                        //const dataFormatada = info.event.start.toISOString().slice(0, 16).replace('T', ' ');
+                        
+                        const data = info.event.start
+
+                        console.log("data click", data)
+                        
+                        // ajustar formato para datetime-local
+                        const ano = data.getFullYear();
+                        const mes = String(data.getMonth() + 1).padStart(2, '0');
+                        const dia = String(data.getDate()).padStart(2, '0');
+                        const horas = String(data.getHours()).padStart(2, '0');
+                        const minutos = String(data.getMinutes()).padStart(2, '0');
+
+                        const dataFormatada = `${ano}-${mes}-${dia}T${horas}:${minutos}`;
+                        
+                        console.log("[DATA SELECIONADA]", dataFormatada)
+
                         document.querySelector('[name="data"]').value = dataFormatada;
                         $('#dataDoctorModal').modal('hide');
                     } else {

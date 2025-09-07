@@ -1,5 +1,6 @@
 from django import forms 
 from .models import Consulta, Cliente, Animal
+from django.contrib.auth.models import User 
 
 # Formulário para o modelo Animal
 class AnimalForm(forms.ModelForm):
@@ -24,7 +25,32 @@ class ClienteForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         for field in self.fields.values():
-            field.widget.attrs.update({'class': 'form-control'})
+            field.widget.attrs.update({'class': 'form-control'}) 
+
+    def save(self, commit=True):
+        """
+        Cria usuários para cliente que não possuem um usuário associado 
+        """
+        cliente = super().save(commit=False)
+        print("[FORMS linha 32]",  cliente)
+        if not cliente.usuario: # usuario == null, vazio
+            if cliente.email:
+                username = cliente.email.split('@')[0]
+            else:
+                username = cliente.nome
+
+            senha = cliente.cpf
+            user = User.objects.create_user(
+                username=username,
+                email=cliente.email,
+                password=senha,
+                first_name=cliente.nome
+            )
+            cliente.usuario = user
+
+        if commit:
+            cliente.save()
+        return cliente 
 
 # Formulário para o modelo Consulta
 class ConsultaForm(forms.ModelForm):
@@ -32,7 +58,10 @@ class ConsultaForm(forms.ModelForm):
         model = Consulta
         fields = ['animal', 'veterinario', 'data', 'motivo', 'observacoes']
         widgets = { 
-            'data': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
+            'data': forms.DateTimeInput(
+                attrs={'type': 'datetime-local', 'class': 'form-control'},
+                format='%Y-%m-%dT%H:%M'
+            ),
             'motivo': forms.TextInput(attrs={'class': 'form-control'}),
             'observacoes': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
         }

@@ -1,8 +1,12 @@
 from django.db import models
 from django.core.exceptions import ValidationError 
+from django.contrib.auth.models import User
 
 # Tabela de clientes
 class Cliente(models.Model):
+    usuario = models.OneToOneField(User, 
+                                   on_delete=models.CASCADE, 
+                                   related_name='cliente', null=True)
     nome = models.CharField(max_length=100)
     cpf = models.CharField(max_length=11, blank=True, null=True)
     telefone = models.CharField(max_length=15)

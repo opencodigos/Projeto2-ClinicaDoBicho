@@ -22,7 +22,8 @@ import { AuthService } from '../services/auth-service';
     IonCard,
     IonCol,
     IonGrid,
-    IonRow
+    IonRow,
+    IonButton
     ]
 })
 export class InicioPage implements OnInit {
@@ -36,6 +37,10 @@ export class InicioPage implements OnInit {
     if (profile) {
       this.username = profile.username;
     }
+  }
+
+ async logout() {
+    await this.authService.logout()
   }
 
 }
