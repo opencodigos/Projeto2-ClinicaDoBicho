@@ -10,7 +10,9 @@ export const tokenInterceptor: HttpInterceptorFn = (req, next ) => {
   const router = inject(Router);
 
   // Se for rota de login ou refresh, ignora e segue em frente.
-  if (req.url.includes('/login') || req.url.includes('/auth/refresh')) {
+  if (req.url.includes('/login') ||
+    req.url.includes('/auth/refresh') ||
+    req.url.includes('/auth/logout/')) {
     return next(req);
   }
 
