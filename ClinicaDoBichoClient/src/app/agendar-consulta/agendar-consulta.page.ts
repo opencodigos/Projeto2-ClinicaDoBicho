@@ -12,8 +12,9 @@ import {
   IonButton,
   IonIcon,
   IonTextarea,
-  IonDatetime, 
-  ModalController, IonAvatar
+  IonDatetime,
+  ModalController, IonAvatar,
+  LoadingController
 } from '@ionic/angular/standalone';
 
 import { ApiService, Consulta, Animal, Veterinario } from '../services/api';
@@ -68,13 +69,29 @@ export class AgendarConsultaPage {
   animalSelecionado: any = null;
   veterinarioSelecionado: any = null;
 
-  constructor(private api: ApiService, private router: Router, private modalCtrl: ModalController) {
+  constructor(
+    private api: ApiService,
+    private router: Router,
+    private loadingCtrl: LoadingController,
+    private modalCtrl: ModalController) {
     addIcons({ checkmarkCircleOutline });
   }
 
-  ngOnInit() {
-    this.listAnimais();
-    this.listVeterinarios();
+  async ngOnInit() {
+    const loading = await this.loadingCtrl.create({
+      message: 'Carregando...',
+      spinner: 'crescent',
+      backdropDismiss: false
+    });
+
+    await loading.present();
+
+    setTimeout(async () => {
+      this.listAnimais();
+      this.listVeterinarios();
+      
+      await loading.dismiss();
+    }, 2000);
   }
 
   // Modal Lista de Animais

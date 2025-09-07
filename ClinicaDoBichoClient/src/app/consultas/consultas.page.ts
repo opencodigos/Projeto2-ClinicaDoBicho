@@ -50,7 +50,9 @@ export class ConsultasPage implements OnInit {
   consultasFiltradas: Consulta[] = []; // Lista de consultas Filtradas
   filtroStatus: string = 'todas'; // Inicia com todos
 
-  constructor(private api: ApiService, private loadingCtrl: LoadingController) {
+  constructor(
+    private api: ApiService,
+    private loadingCtrl: LoadingController) {
     addIcons({
       calendarOutline,
       personOutline,
@@ -105,7 +107,7 @@ export class ConsultasPage implements OnInit {
         this.consultas = data;
 
         this.filtrarConsultas();
-        
+
         await loading.dismiss()
       },
       error: async (error) => {
