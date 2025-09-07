@@ -12,9 +12,7 @@ import {
   IonButton,
   IonIcon,
   IonTextarea,
-  IonDatetime,
-  IonSelectOption,
-  IonSelect,
+  IonDatetime, 
   ModalController, IonAvatar
 } from '@ionic/angular/standalone';
 
@@ -45,8 +43,6 @@ import { ListaVeterinariosModal } from './lista-veterinario-modal';
     IonToolbar,
     IonTextarea,
     IonDatetime,
-    IonSelect,
-    IonSelectOption,
     IonAvatar
   ]
 })
