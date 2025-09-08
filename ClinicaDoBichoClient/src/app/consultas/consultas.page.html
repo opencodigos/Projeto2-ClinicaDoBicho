@@ -9,6 +9,8 @@
     <ion-segment-button value="todas"><ion-label>Todas</ion-label></ion-segment-button>
     <ion-segment-button value="agendada"><ion-label>Agendadas</ion-label></ion-segment-button>
     <ion-segment-button value="concluida"><ion-label>Concluídas</ion-label></ion-segment-button>
+    <ion-segment-button value="cancelada"><ion-label>Canceladas</ion-label></ion-segment-button>
+
   </ion-segment>
 
   @if (consultasFiltradas.length === 0) {
@@ -23,7 +25,7 @@
     @for (consulta of consultasFiltradas; track $index) {
     <ion-card class="consulta-card" [ngClass]="'status-' + (consulta.status || 'agendada').toLowerCase()">
       <div class="status-indicator">
-        <ion-badge color="light" style="color:#60b12a">{{ getStatusText(consulta.status) }}</ion-badge>
+        <ion-badge [ngClass]="'badge-' + (consulta.status || 'agendada').toLowerCase()">{{ consulta.status }}</ion-badge>
       </div>
       <ion-card-header>
         <ion-card-subtitle>

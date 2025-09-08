@@ -71,20 +71,10 @@ export class ConsultasPage implements OnInit {
     if (this.filtroStatus === 'todas') {
       this.consultasFiltradas = [...this.consultas];
     } else {
+      console.log(this.filtroStatus)
       this.consultasFiltradas = this.consultas.filter(consulta =>
         (consulta.status || 'agendada').toLowerCase() === this.filtroStatus
       );
-    }
-  }
-
-   // Método para obter o texto do status
-  // nao temos esse parametro ainda vindo do DB mas podemos deixar aqui pra usar
-  getStatusText(status: string | undefined): string {
-    switch ((status || 'agendada').toLowerCase()) {
-      case 'agendada': return 'Agendada';
-      case 'concluida': return 'Concluída';
-      case 'cancelada': return 'Cancelada';
-      default: return 'Pendente';
     }
   }
 
@@ -94,7 +84,7 @@ export class ConsultasPage implements OnInit {
 
     // Cria e exibe o loading
     const loading = await this.loadingCtrl.create({
-      message: 'Entrando...',
+      message: 'Carregando...',
       spinner: 'crescent',
       backdropDismiss: false
     });

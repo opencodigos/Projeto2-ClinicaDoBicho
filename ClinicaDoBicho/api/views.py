@@ -1,9 +1,13 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from core.models import Cliente, Animal, MedicoVeterinario, Consulta
+from rest_framework.response import Response
+from rest_framework.decorators import action
+
 from .serializers import (ClienteSerializer, 
                           AnimalSerializer,     
                           MedicoVeterinarioSerializer, 
+                          ConsultaAddSerializer,
                           ConsultaSerializer,
                           ) 
 
@@ -47,3 +51,15 @@ class ConsultaViewSet(viewsets.ModelViewSet):
             return Consulta.objects.all()
         return Consulta.objects.filter(animal__dono__usuario=user)
         
+    @action(detail=False)
+    def resumo_consultas(self, request):
+        qs = self.get_queryset()
+
+        resumo = {
+            "todas": qs.count(), # 4 
+            "agendadas": qs.filter(status='Agendada').count(), # 5
+            "concluidas": qs.filter(status='Concluida').count(),
+            "canceladas": qs.filter(status='Cancelada').count(),
+        }
+
+        return Response(resumo)

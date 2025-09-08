@@ -57,6 +57,13 @@ export class ApiService {
     return this.http.get<Consulta[]>(`${this.baseUrl}/consultas/`);
   }
 
+  // Resumo Consultas
+  resumoConsultas(): Observable<Consulta[]> {
+    console.log('ApiService: Método getConsultas() chamado. Fazendo requisição GET...');
+
+    return this.http.get<Consulta[]>(`${this.baseUrl}/consultas/resumo_consultas/`);
+  }
+
   // criar consulta
   agendarConsulta(consulta: Consulta): Observable<Consulta> {
     return this.http.post<Consulta>(`${this.baseUrl}/consultas/`, consulta);

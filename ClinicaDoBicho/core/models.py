@@ -47,14 +47,26 @@ class MedicoVeterinario(models.Model):
 
     def __str__(self):
         return self.nome
-
+ 
 # Agenda consulta
 class Consulta(models.Model):
+
+    class StatusConsulta(models.TextChoices):
+        AGENDADA = 'Agendada'
+        CONCLUIDA = 'Concluida'
+        CANCELADA = 'Cancelada'
+
     animal = models.ForeignKey(Animal, on_delete=models.CASCADE)
     veterinario = models.ForeignKey(MedicoVeterinario, on_delete=models.SET_NULL, null=True)
     data = models.DateTimeField()
     motivo = models.TextField()
     observacoes = models.TextField(blank=True)
+
+    status = models.CharField(max_length=15, choices=StatusConsulta.choices, default=StatusConsulta.AGENDADA)
+
+    created_at = models.DateTimeField(auto_now_add=True) # Data de criação
+    updated_at = models.DateTimeField(auto_now=True) # Data de atualização
+
 
     def clean(self):
         if Consulta.objects.filter(

@@ -18,13 +18,26 @@
     .status-indicator {
       position: absolute;
       top: 8px; right: 8px;
+
+      ion-badge.badge-agendada {
+        --color: #fff;
+        --background: #ddd60d;
+      }
+      ion-badge.badge-concluida {
+        --color: #fff;
+        --background: #60b12a;
+      }
+      ion-badge.badge-cancelada {
+        --color: #fff;
+        --background: #e74c3c;
+      }
     }
 
     ion-card-header {
       ion-card-subtitle {
         font-size: 14px;
         font-weight: 600;
-        color: #60b12a;
+        // color: #60b12a;
         display: flex; align-items: center;
 
         ion-icon { margin-right: 6px; }
@@ -45,14 +58,14 @@
 
         ion-icon {
           margin-right: 8px;
-          color: #60b12a;
+          //color: #60b12a;
         }
       }
     }
   }
 
-  .status-agendada   { border-left: 4px solid #60b12a; }
-  .status-concluida  { border-left: 4px solid #2ecc71; }
+  .status-agendada   { border-left: 4px solid #ddd60d; }
+  .status-concluida  { border-left: 4px solid #60b12a; }
   .status-cancelada  { border-left: 4px solid #e74c3c; }
 
   .sem-consultas {

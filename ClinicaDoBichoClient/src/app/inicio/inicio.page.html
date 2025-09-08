@@ -13,18 +13,15 @@
     }
     <p>Que bom te ver por aqui. O que você gostaria de fazer hoje?</p>
 
-    <ion-button color="danger" (click)="logout()" expand="block" style="margin-top: 20px;">
-      Logout
-    </ion-button>
-
   </div>
 
   <!-- Grid centralizado -->
   <ion-grid class="simple-grid">
     <ion-row class="ion-justify-content-center" style="flex-direction: column; gap: 15px;">
-      <ion-col size="auto" class="grid-item">Agendadas: 3</ion-col>
-      <ion-col size="auto" class="grid-item">Concluídas: 5</ion-col>
-      <ion-col size="auto" class="grid-item">Canceladas: 1</ion-col>
+      <ion-col size="auto" class="grid-item">Agendadas: {{resumo.agendadas}}</ion-col>
+      <ion-col size="auto" class="grid-item">Concluídas: {{resumo.concluidas}}</ion-col>
+      <ion-col size="auto" class="grid-item">Canceladas: {{resumo.canceladas}}</ion-col>
+      <ion-col size="auto" class="grid-item">Total: {{resumo.todas}}</ion-col>
     </ion-row>
   </ion-grid>
 
@@ -32,7 +29,7 @@
   <div style="flex: 1;"></div>
 
   <!-- Banner de dica no bottom -->
-  <ion-card class="banner-card" style="position: absolute; bottom: 20px; left: 10px; right: 10px;">
+  <ion-card class="banner-card">
     <ion-card-header>
       <ion-card-title>Dica do Dia</ion-card-title>
     </ion-card-header>
@@ -40,5 +37,10 @@
       Não se esqueça de vacinar seu pet no mês correto!
     </ion-card-content>
   </ion-card>
+  
+    <ion-button color="danger" (click)="logout()" expand="block" style="margin-top: 20px;">
+      Logout
+    </ion-button>
+
 
 </ion-content>

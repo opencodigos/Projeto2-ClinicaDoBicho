@@ -11,8 +11,7 @@ export const tokenInterceptor: HttpInterceptorFn = (req, next ) => {
 
   // Se for rota de login ou refresh, ignora e segue em frente.
   if (req.url.includes('/login') ||
-    req.url.includes('/auth/refresh') ||
-    req.url.includes('/auth/logout/')) {
+    req.url.includes('/auth/refresh')) {
     return next(req);
   }
 
