@@ -122,7 +122,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.SessionAuthentication', # pode da problema com token do jwt remover
+        # 'rest_framework.authentication.SessionAuthentication', # pode da problema com token do jwt remover
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
 }
