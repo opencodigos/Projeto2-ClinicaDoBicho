@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.exceptions import ValidationError 
 from django.contrib.auth.models import User
+from django.utils.timezone import localtime
 
 # Tabela de clientes
 class Cliente(models.Model):
@@ -78,6 +79,13 @@ class Consulta(models.Model):
         self.clean()
         super().save(*args, **kwargs)
 
+
     def __str__(self):
         veterinario = self.veterinario.nome if self.veterinario else 'desconhecido'
-        return f"Consulta de {self.animal.nome} com {veterinario} em {self.data}"
+        
+        # Converte a data/hora (que está em UTC) para o fuso horário local
+        # definido no seu settings.py (America/Sao_Paulo) -3 
+        data_local = localtime(self.data)
+        data_formatada = data_local.strftime('%d/%m/%Y às %H:%M')
+        
+        return f"Consulta de {self.animal.nome} com {veterinario} em {data_formatada}"

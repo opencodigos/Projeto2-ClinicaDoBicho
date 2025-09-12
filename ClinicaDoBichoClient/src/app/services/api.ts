@@ -64,6 +64,11 @@ export class ApiService {
     return this.http.get<Consulta[]>(`${this.baseUrl}/consultas/resumo_consultas/`);
   }
 
+  // Eventos Veterinarios
+  getEventosVeterinario(veterinarioId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/consultas/eventos_veterinario/?veterinario=${veterinarioId}`);
+  }
+
   // criar consulta
   agendarConsulta(consulta: Consulta): Observable<Consulta> {
     return this.http.post<Consulta>(`${this.baseUrl}/consultas/`, consulta);

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -12,9 +12,10 @@ import {
   IonButton,
   IonIcon,
   IonTextarea,
-  IonDatetime,
-  ModalController, IonAvatar,
-  LoadingController
+  IonAvatar,
+  ModalController,
+  LoadingController,
+  AlertController
 } from '@ionic/angular/standalone';
 
 import { ApiService, Consulta, Animal, Veterinario } from '../services/api';
@@ -24,6 +25,8 @@ import { addIcons } from 'ionicons';
 import { checkmarkCircleOutline } from 'ionicons/icons';
 import { ListaAnimaisModal } from './lista-animais-modal';
 import { ListaVeterinariosModal } from './lista-veterinario-modal';
+import { CalendarComponent } from '../components/calendar/calendar.component';
+import { FullCalendarComponent } from '@fullcalendar/angular';
 
 @Component({
   selector: 'app-agendar-consulta',
@@ -43,11 +46,11 @@ import { ListaVeterinariosModal } from './lista-veterinario-modal';
     IonTitle,
     IonToolbar,
     IonTextarea,
-    IonDatetime,
-    IonAvatar
+    IonAvatar,
+    CalendarComponent
   ]
 })
-export class AgendarConsultaPage {
+export class AgendarConsultaPage  {
 
   public consulta: Consulta = {
     animal: {} as Animal,
@@ -55,7 +58,7 @@ export class AgendarConsultaPage {
     data: new Date().toISOString(),
     motivo: '',
     observacoes: '',
-    status: ''
+    status: 'Agendada'
   };
 
   animais: Animal[] = [];
@@ -73,9 +76,12 @@ export class AgendarConsultaPage {
     private api: ApiService,
     private router: Router,
     private loadingCtrl: LoadingController,
-    private modalCtrl: ModalController) {
+    private modalCtrl: ModalController,
+    private alertController: AlertController) {
     addIcons({ checkmarkCircleOutline });
   }
+
+  @ViewChild(CalendarComponent) private customCalendar!: CalendarComponent;
 
   async ngOnInit() {
     const loading = await this.loadingCtrl.create({
@@ -89,10 +95,20 @@ export class AgendarConsultaPage {
     setTimeout(async () => {
       this.listAnimais();
       this.listVeterinarios();
-      
+
       await loading.dismiss();
     }, 2000);
   }
+
+   resetCalendar() {
+    if (this.customCalendar) {
+      this.customCalendar.clearEvents();
+       console.log('Função resetCalendar do pai chamou os métodos do filho.');
+    } else {
+      console.warn('Tentativa de resetar, mas o app-calendar não foi encontrado.');
+    }
+  }
+
 
   // Modal Lista de Animais
  async abrirModalAnimais() {
@@ -110,6 +126,7 @@ export class AgendarConsultaPage {
       if (result.data) {
         console.log('Animal selecionado:', result.data);
         this.animalSelecionado = result.data;
+        this.consulta.animal = result.data.id; // Passa id do animal p/ DB
       }
     });
 
@@ -131,11 +148,90 @@ export class AgendarConsultaPage {
      modal.onDidDismiss().then((result) => {
       if (result.data) {
         console.log('Veterinario selecionado:', result.data);
-        this.veterinarioSelecionado = result.data;
+        let res = result.data
+        this.veterinarioSelecionado = res;
+        this.consulta.veterinario = res.id // Passa id do veterinario p/ DB
+        this.carregarEventosVeterinario(res.id)
       }
     });
 
   }
+
+  /**
+   * FullCalendar
+   * @returns
+   */
+
+  // lista de Eventos
+  meusEventos: any[] = [];
+
+  // data
+  dataSelecionada: string = '';
+
+
+  // Carregar os dados Evento veteriano
+  async carregarEventosVeterinario(veterinarioId: number) {
+    console.log('Carregando eventos do veterinário:', veterinarioId);
+
+    // loading
+    const loading = await this.loadingCtrl.create({
+      message: 'Carregando...',
+      spinner: 'crescent',
+      backdropDismiss: false
+    });
+
+    await loading.present();
+
+    if (!veterinarioId) return;
+
+    this.api.getEventosVeterinario(veterinarioId).subscribe({
+      next: (eventos: any[]) => {
+        console.log("Lista de Eventos", eventos);
+        this.meusEventos = eventos;
+        loading.dismiss();
+      },
+      error: (error) => {
+        console.error('Erro ao carregar eventos:', error);
+        loading.dismiss();
+      }
+    });
+  }
+
+
+
+
+  onEventClick(event: any) {
+    console.log('Evento clicado ', event.start);
+
+
+    if (event.title !== "Disponível") {
+      this.alertController.create({
+        header: 'Horário Indisponível',
+        message: 'Este horário já está reservado para outra consulta.',
+        buttons: ['OK']
+      }).then((alert: HTMLIonAlertElement) => alert.present());
+      return;
+    }
+
+    // Atualiza a data na consulta para ser enviada ao servidor
+    this.consulta.data = event.start;
+
+    // Formata a data para exibição amigável
+    const data = new Date(event.start);
+    const dia = data.getDate().toString().padStart(2, '0');
+    const mes = (data.getMonth() + 1).toString().padStart(2, '0');
+    const ano = data.getFullYear();
+    const hora = data.getHours().toString().padStart(2, '0');
+    const minutos = data.getMinutes().toString().padStart(2, '0');
+    const periodo = data.getHours() < 12 ? 'da manhã' : data.getHours() < 18 ? 'da tarde' : 'da noite';
+
+    // Cria a string formatada e armazena na propriedade
+    this.dataSelecionada = `${dia}/${mes}/${ano} às ${hora}:${minutos} ${periodo}`;
+
+    console.log('Data formatada:', this.dataSelecionada);
+  }
+
+
 
 
   agendar() {
@@ -151,11 +247,28 @@ export class AgendarConsultaPage {
 
     console.log("Consulta a agendar:", this.consulta);
 
-
     this.api.agendarConsulta(this.consulta).subscribe({
       next: (data) => {
         console.log("Status:", data);
-        this.router.navigate(['/consultas']);
+
+        this.resetCalendar();
+
+        this.consulta = {
+          animal: {} as Animal,
+          veterinario: {} as Veterinario,
+          data: new Date().toISOString(),
+          motivo: '',
+          observacoes: '',
+          status: 'Agendada'
+        };
+
+        this.animalSelecionado = null;
+        this.veterinarioSelecionado = null;
+        this.dataSelecionada = '';
+        this.meusEventos = [];
+
+        this.router.navigate(['/tabs/consultas']);
+
       },
       error: (error) => {
         console.log("Status:", error);
@@ -189,6 +302,7 @@ export class AgendarConsultaPage {
       }
     });
   }
+
 
 }
 

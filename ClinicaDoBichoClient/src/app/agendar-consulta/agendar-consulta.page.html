@@ -28,16 +28,15 @@
       </ion-label>
     </ion-item>
 
+
+    <app-calendar #fullCalendar [events]="meusEventos" (eventClicked)="onEventClick($event)"></app-calendar>
+
+
     <ion-item>
-      <ion-label position="floating">Data e Hora</ion-label>
-      <ion-datetime
-        [(ngModel)]="consulta.data"
-        name="data"
-        display-format="DD/MM/YYYY HH:mm"
-        picker-format="DD/MM/YYYY HH:mm"
-        required>
-      </ion-datetime>
+      <ion-label>Data e Hora Selecionada:</ion-label>
+      <ion-input [value]="dataSelecionada" [disabled]="true" required></ion-input>
     </ion-item>
+
 
     <ion-item>
       <ion-label position="floating">Motivo</ion-label>

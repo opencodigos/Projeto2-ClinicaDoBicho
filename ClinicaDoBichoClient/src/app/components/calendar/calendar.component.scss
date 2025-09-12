@@ -1,0 +1,72 @@
+@use 'sass:color';
+
+::ng-deep {
+// Título do calendário
+.fc .fc-toolbar-title {
+    font-size: 18px;
+    color: #333; // cor do texto
+    font-weight: bold;
+}
+
+// Cabeçalhos dos dias da semana
+.fc .fc-col-header-cell-cushion {
+    color: #555;
+    font-weight: 600;
+}
+
+// Células do calendário
+.fc .fc-daygrid-day {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+}
+
+// Eventos
+.fc .fc-event {
+    background-color: #3788d8;
+    border-color: #3788d8;
+    color: white;
+    border-radius: 4px;
+}
+
+// Hoje
+.fc .fc-day-today {
+    background-color: rgba(255, 220, 40, 0.15) !important;
+}
+
+// Botões da barra de ferramentas
+.fc .fc-button-primary {
+    background-color: #3788d8;
+    border-color: #3788d8;
+
+    &:hover {
+        background-color: color.adjust(#3788d8, $lightness: -10%);
+        border-color: color.adjust(#3788d8, $lightness: -10%);
+    }
+}
+
+// Linhas de hora
+.fc .fc-timegrid-slot {
+    height: 40px;
+    border-bottom: 1px solid #eee;
+}
+
+// Horário de trabalho
+.fc .fc-timegrid-col.fc-day-past {
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+// Horário de almoço (você pode adicionar uma classe específica no componente)
+.fc .lunch-time {
+    background-color: rgba(255, 235, 230, 0.5);
+}
+
+@media screen and (max-width: 768px) {
+    .fc .fc-toolbar {
+        flex-direction: column;
+    }
+
+    .fc .fc-toolbar-title {
+        font-size: 16px;
+    }
+}
+}
