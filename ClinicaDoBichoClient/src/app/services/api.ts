@@ -62,7 +62,12 @@ export class ApiService {
     console.log('ApiService: Método getConsultas() chamado. Fazendo requisição GET...');
 
     return this.http.get<Consulta[]>(`${this.baseUrl}/consultas/resumo_consultas/`);
-  } 
+  }
+
+  // Evento por veterinario
+  getEventosVeterinario(veterinarioId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/consultas/eventos_veterinario/?veterinario=${veterinarioId}`);
+  }
 
   // criar consulta
   agendarConsulta(consulta: Consulta): Observable<Consulta> {

@@ -141,11 +141,12 @@ def consulta_eventos(request):
 
 @login_required(login_url="login")
 def consulta_eventos_veterinario(request):
-    from datetime import datetime, timedelta
+    from django.utils.timezone import localtime, make_aware, get_current_timezone
+    from datetime import datetime, time, timedelta # time é mais limpo que datetime.min.time() 
 
     veterinario_id = request.GET.get("veterinario")
     if not veterinario_id:
-        return JsonResponse([], safe=False)
+        return JsonResponse([], status=200)
 
     # Consultas agendadas já no formato necessário
     consultas = (
@@ -154,37 +155,40 @@ def consulta_eventos_veterinario(request):
     )
 
     consultas_dict = {
-        c.data.strftime("%Y-%m-%d-%H"): c.id for c in consultas
-    }
+            f"{localtime(c.data).strftime('%Y-%m-%d')}-{localtime(c.data).hour}": c.id for c in consultas
+        }
+    # 2025-09-12-09
+    print(consultas_dict)
 
     eventos = [
         {
             "id": c.id,
             "title": f"{c.animal.nome} - {c.veterinario.nome}",
-            "start": c.data.strftime("%Y-%m-%dT%H:%M:%S"),
+            "start": localtime(c.data).strftime("%Y-%m-%dT%H:%M:%S"), # 2: Converta para o fuso local
             "color": "#dc3545",  # vermelho
         }
         for c in consultas
     ]
 
-    hoje = datetime.now().date()
+    hoje = localtime().date() # Use localtime() para pegar a data atual no fuso correto
     horarios = [8, 9, 10, 11, 13, 14, 15, 16]
 
     for i in range(7): 
         data = hoje + timedelta(days=i)
-        if data.weekday() >= 5:
+        if data.weekday() >= 5:  # Pula sábado e domingo
             continue 
 
         for hora in horarios:
-            key = f"{data.strftime('%Y-%m-%d')}-{hora}"
+            key = f"{data.strftime('%Y-%m-%d')}-{hora}" 
+            print(key)
             if key not in consultas_dict:
-                slot_inicio = datetime.combine(data, datetime.min.time().replace(hour=hora))
+                slot_inicio = make_aware(datetime.combine(data, time(hour=hora)), get_current_timezone()) # timezone são paulo, portugal
                 eventos.append(
                     {
                         "id": f"disp-{data}-{hora}",
                         "title": "Disponível",
-                        "start": slot_inicio.strftime("%Y-%m-%dT%H:%M:%S"),
+                        "start": slot_inicio.strftime("%Y-%m-%dT%H:%M:%S"), # Formate o slot fuso horário
                         "color": "#28a745",  # verde
                     }
-                ) 
+                )  
     return JsonResponse(eventos, safe=False)

@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FullCalendarModule } from '@fullcalendar/angular';
+import { FullCalendarModule, FullCalendarComponent as FullCalendar } from '@fullcalendar/angular';
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridWeekPlugin from '@fullcalendar/timegrid';
@@ -18,6 +18,10 @@ export class CalendarComponent {
   @Input() events: any[] = [];
   @Output() dateClicked = new EventEmitter<string>();
   @Output() eventClicked = new EventEmitter<any>();
+
+  @ViewChild('fullCalendar') calendarInstance!: FullCalendar;
+
+  eventoSelecionadoId: string | number | null = null;
 
   calendarOptions: CalendarOptions = {
     plugins: [
@@ -40,8 +44,8 @@ export class CalendarComponent {
 
     // Horário de trabalho (excluindo almoço)
     businessHours: [
-        { daysOfWeek: [1, 2, 3, 4, 5], startTime: '08:00', endTime: '12:00' },
-        { daysOfWeek: [1, 2, 3, 4, 5], startTime: '13:00', endTime: '17:00' }
+      { daysOfWeek: [1, 2, 3, 4, 5], startTime: '08:00', endTime: '12:00' },
+      { daysOfWeek: [1, 2, 3, 4, 5], startTime: '13:00', endTime: '17:00' }
     ],
 
     // Bloquear datas passadas
@@ -50,7 +54,39 @@ export class CalendarComponent {
     // },
 
     dateClick: (arg) => this.dateClicked.emit(arg.dateStr),
-    eventClick: (arg) => this.eventClicked.emit(arg.event)
+    // eventClick: (arg) => this.eventClicked.emit(arg.event)
+
+    eventClick: (arg) => {
+
+
+      // Salva o evento clicado
+      this.eventoSelecionadoId = arg.event.id;
+      console.log('Evento clicado ', arg.event);
+
+      // Atualiza a aparência do evento selecionado
+      const calendarApi = arg.view.calendar;
+
+      // Recarrega os eventos para aplicar o estilo
+      calendarApi.getEvents().forEach(evt => {
+        // Aplica estilo ao evento selecionado
+        if (evt.id === this.eventoSelecionadoId) {
+          evt.setProp('backgroundColor', '#007bff');
+          evt.setProp('borderColor', '#0056b3');
+          evt.setProp('textColor', '#ffffff');
+        }
+        // Restaura o estilo dos eventos disponíveis não selecionados
+        else if (evt.title === 'Disponível') {
+          evt.setProp('backgroundColor', '#28a745');
+          evt.setProp('borderColor', '#28a745');
+          evt.setProp('textColor', '#ffffff');
+        }
+      });
+
+      // Emite o evento para o componente pai
+      this.eventClicked.emit(arg.event);
+    }
+
+
   };
 
   ngOnChanges() {
@@ -59,6 +95,27 @@ export class CalendarComponent {
         ...this.calendarOptions,
         events: this.events // atualiza quando `events` mudar
       };
+    }
+  }
+
+  public clearEvents() {
+    if (this.calendarInstance) {
+      console.log("Calendar Instance !!!")
+      const api = this.calendarInstance.getApi();
+
+      api.removeAllEvents();
+      api.destroy();
+
+      console.log("Remove todos os events");
+      console.log("Destroi e recria novamente");
+
+      setTimeout(() => {
+        api.render();
+        api.updateSize(); // 👈 força recalcular altura/largura
+        window.dispatchEvent(new Event('resize')); // 👈 extra fallback
+        console.log('Calendário limpo, recarregado e redimensionado.');
+      }, 100);
+
     }
   }
 

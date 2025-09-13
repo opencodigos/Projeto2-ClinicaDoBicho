@@ -81,5 +81,11 @@ class Consulta(models.Model):
 
 
     def __str__(self):
-        veterinario = self.veterinario.nome if self.veterinario else 'desconhecido' 
-        return f"Consulta de {self.animal.nome} com {veterinario} em {self.data}"
+        veterinario = self.veterinario.nome if self.veterinario else 'desconhecido'
+        
+        # Converte a data/hora (que está em UTC) para o fuso horário local
+        # definido no seu settings.py (America/Sao_Paulo)
+        data_local = localtime(self.data)
+        data_formatada = data_local.strftime('%d/%m/%Y às %H:%M')
+        
+        return f"Consulta de {self.animal.nome} com {veterinario} em {data_formatada}"

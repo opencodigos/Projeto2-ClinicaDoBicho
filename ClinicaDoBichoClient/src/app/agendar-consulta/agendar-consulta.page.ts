@@ -80,6 +80,8 @@ export class AgendarConsultaPage {
     addIcons({ checkmarkCircleOutline });
   }
 
+  @ViewChild(CalendarComponent) calendar!: CalendarComponent;
+
   async ngOnInit() {
     const loading = await this.loadingCtrl.create({
       message: 'Carregando...',
@@ -139,6 +141,7 @@ export class AgendarConsultaPage {
         let res = result.data
         this.veterinarioSelecionado = res;
         this.consulta.veterinario = res.id // Passa id do veterinario p/ DB
+        this.carregarEventosVeterinario(res.id)
       }
     });
 
@@ -148,39 +151,50 @@ export class AgendarConsultaPage {
    * FullCalendar
    * @returns
    */
+  meusEventos: any[] = []
 
-  // data
-  meusEventos = [
-    {
-      id: 1,
-      title: "Disponível",
-      start: '2025-09-15T14:00:00',
-      color: "#28a745",
-    },
-    {
-      id: 2,
-      title: "Disponível",
-      start: '2025-09-15T15:00:00',
-      color: "#28a745",
-    },
-    {
-      id: 3,
-      title: "Disponível",
-      start: '2025-09-16T10:00:00',
-      color: "#28a745",
-    },
-    {
-      id: 4,
-      title: "Disponível",
-      start: '2025-09-17T09:00:00',
-      color: "#28a745",
-    }
-  ];
+  async carregarEventosVeterinario(veterinarioId: number) {
+
+    console.log('Carregando eventos do veterinário:', veterinarioId);
+
+    // loading
+    const loading = await this.loadingCtrl.create({
+      message: 'Carregando...',
+      spinner: 'crescent',
+      backdropDismiss: false
+    });
+
+    await loading.present();
+
+    if (!veterinarioId) return;
+
+    this.api.getEventosVeterinario(veterinarioId).subscribe({
+      next: (eventos: any[]) => {
+        this.meusEventos = eventos;
+        loading.dismiss();
+      },
+      error: (error) => {
+        console.error('Erro ao carregar eventos:', error);
+        loading.dismiss();
+      }
+    });
+  }
+
 
   // data
   dataSelecionada: string = '';
 
   onEventClick(event: any) {
+
+    if (event.title !== "Disponível") {
+      this.alertController.create({
+        header: 'Horário Indisponível',
+        message: 'Este horário já está reservado para outra consulta.',
+        buttons: ['OK']
+      }).then((alert: HTMLIonAlertElement) => alert.present());
+      return;
+    }
+
     console.log('Evento clicado ', event.start);
 
     // Atualiza a data na consulta para ser enviada ao servidor
@@ -201,8 +215,28 @@ export class AgendarConsultaPage {
     console.log('Data formatada:', this.dataSelecionada);
   }
 
+  resetFormCalendar() {
+    // Limpa os dados do formulário
+    this.consulta = {
+      animal: {} as Animal,
+      veterinario: {} as Veterinario,
+      data: new Date().toISOString(),
+      motivo: '',
+      observacoes: '',
+      status: 'Agendada'
+    };
 
-  agendar() {
+    this.animalSelecionado = null;
+    this.veterinarioSelecionado = null;
+    this.dataSelecionada = '';
+    this.meusEventos = [];
+
+    this.calendar.clearEvents();
+  }
+
+
+
+  async agendar() {
 
     // no submit a hora
     // validação simples do horário: 08:00-12:00 ou 13:00-17:00
@@ -213,17 +247,43 @@ export class AgendarConsultaPage {
       return;
     }
 
+    // loading
+    const loading = await this.loadingCtrl.create({
+      message: 'Carregando...',
+      spinner: 'crescent',
+      backdropDismiss: false
+    });
+
+    await loading.present();
+
     console.log("Consulta a agendar:", this.consulta);
 
     this.api.agendarConsulta(this.consulta).subscribe({
       next: (data) => {
         console.log("Status:", data);
 
-        this.router.navigate(['consultas']);
+        // limpar formulário
+        this.resetFormCalendar();
+
+        // this.router.navigate(['/tabs/consultas']);
+
+        loading.dismiss();
+
+        this.alertController.create({
+          header: 'Sucesso',
+          message: 'Consulta cadastrada com sucesso!',
+          buttons: [{
+            text: 'OK',
+            handler: () => {
+              this.router.navigate(['/tabs/consultas']);
+            }
+          }]
+        }).then(alert => alert.present());
 
       },
       error: (error) => {
         console.log("Status:", error);
+        loading.dismiss(); 
         alert('Erro ao agendar!')
       }
     });
