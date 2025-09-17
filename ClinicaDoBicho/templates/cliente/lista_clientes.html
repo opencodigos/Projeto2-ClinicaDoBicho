@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %} 
+<div class="page-header d-flex justify-content-between align-items-center">
+    <h2 class="page-title">Lista de Clientes</h2>
+    <form method="get" class="d-flex">
+        <input type="text" name="cpf" value="{{ filtro_cpf }}" 
+            class="form-control me-2" placeholder="Filtrar por CPF">
+        <button type="submit" class="btn btn-primary me-2">Filtrar</button> 
+        {% if filtro_cpf %}
+        <a href="{% url 'lista_clientes' %}" 
+            class="btn btn-secondary">Limpar</a>
+        {% endif %}
+    </form>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>CPF</th>
+            <th>Telefone</th>
+            <th>Pets</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for cliente in clientes %}
+        <tr>
+            <td>{{ cliente.nome }}</td>
+            <td>{{ cliente.cpf }}</td>
+            <td>{{ cliente.telefone }}</td>
+            <td>{{ cliente.animais.all.count }}</td>
+            <td>
+                <a href="{% url 'edit_cliente' cliente.id %}" class="btn btn-warning btn-sm">Editar</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table> 
+
+{% include "components/pagination.html" with page_obj=clientes %} 
+
+{% endblock %}

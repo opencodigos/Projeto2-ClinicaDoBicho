@@ -1,0 +1,135 @@
+{% extends 'base.html' %} 
+
+{% load custom_tags %}
+{% block content %}
+
+<form method="post">
+    {% csrf_token %}
+
+     <div class="page-header">
+        <h2 class="page-title">Editar Cliente</h2>
+        <div class="d-flex align-items-center gap-2">
+            <button type="button" onclick="window.history.back()" class="btn btn-secondary">Voltar</button>
+            <button type="submit" class="btn btn-primary">Salvar Cliente</button>
+        </div>
+    </div>
+ 
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            {{ form.nome }} 
+        </div>
+        <div class="col-md-6 mb-3">
+            {{ form.cpf }} 
+        </div> 
+        <div class="col-md-6 mb-3">
+            {{ form.telefone }} 
+        </div>
+        <div class="col-md-6 mb-3">
+            {{ form.email }} 
+        </div> 
+    </div> 
+    {{ form.endereco }} 
+
+    <hr>
+
+</form> 
+
+
+<div class="d-flex align-items-center gap-2">
+    <h3 class="page-title mt-4">Pets</h3>
+    <button type="button" class="btn btn-success" 
+        data-bs-toggle="modal" data-bs-target="#animalModal">
+        +
+    </button>
+</div> 
+
+{% include 'add_animal_modal.html' %}
+
+<table class="table" id="animalTable">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Raça</th>
+            <th class="table-actions">Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for animal in animais %}
+        <tr data-animal-id="{{ animal.id }}">
+            <td>{{ animal.nome }}</td>
+            <td>{{ animal.raca }}</td>
+            <td class="text-center">
+                <button type="button" 
+                        class="btn btn-warning"
+                        data-bs-toggle="modal" 
+                        data-bs-target="#animalEditModal{{ animal.id }}">
+                    Editar
+                </button>
+            </td>
+        </tr>
+
+    <!-- Modal para cada animal -->
+    <div class="modal fade" id="animalEditModal{{ animal.id }}" tabindex="-1">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title">Editar Pet: {{ animal.nome }}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+            <form class="animalEditForm" data-id="{{ animal.id }}">
+                {% csrf_token %}
+                {{ forms_pet|get_item:animal.id }}
+
+                <div class="mt-3 text-end">
+                    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                </div>
+            </form>
+            </div>
+        </div>
+        </div>
+    </div>
+
+{% endfor %}
+</table> 
+
+{% endblock %}
+
+{% block scripts %} 
+<script>
+$(document).ready(function(){
+    $('.animalEditForm').submit(function(e){
+        e.preventDefault();
+
+        let form = $(this);
+        let animalId = form.data('id');
+
+        $.ajax({
+            url: `/animal/${animalId}/edit/`,
+            method: "POST",
+            data: form.serialize(),
+            success: function(data){
+                console.warn("Pet Atualizado:", data);
+                if(data.success){  
+
+                    // atualiza a tabela
+                    let animalRow =  $(`tr[data-animal-id="${animalId}"]`);
+                    animalRow.find('td:first').text(data.nome);
+                    animalRow.find('td:nth-child(2)').text(data.raca);
+
+
+                    // fecha modal 
+                    $('#animalEditModal' + animalId).modal('hide');
+ 
+                } else {
+                    alert('Erro: ' + JSON.stringify(data.errors));
+                }
+            },
+            error: function(){
+                alert('Erro ao salvar o animal.');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

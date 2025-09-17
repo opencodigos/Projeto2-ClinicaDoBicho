@@ -79,7 +79,6 @@ class Consulta(models.Model):
         self.clean()
         super().save(*args, **kwargs)
 
-
     def __str__(self):
         veterinario = self.veterinario.nome if self.veterinario else 'desconhecido'
         

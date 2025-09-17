@@ -1,5 +1,7 @@
 import random
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404 
+from django.views.decorators.csrf import csrf_exempt
+from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.contrib import messages
 from .models import Animal, Consulta, Cliente
@@ -46,14 +48,37 @@ def add_animal(request):
             # print(cpf)
             animal.dono = Cliente.objects.get(cpf=cpf) 
             animal.save()
-            return JsonResponse({'id': animal.id, 'nome': animal.nome})
+            return JsonResponse({
+                'id': animal.id, 
+                'nome': animal.nome, 
+                'raca': animal.raca
+                })
         else:
             return JsonResponse({'errors': form.errors}, status=400)
     else:
         form = AnimalForm()
     return render(request, 'add_animal_modal.html', {'form': form})
+ 
 
 
+
+# Lista de Clientes
+@login_required(login_url='login')
+def lista_clientes(request):
+    filtro_cpf = request.GET.get('cpf', '')
+    clientes_qs = Cliente.objects.all().prefetch_related('animais')
+    if filtro_cpf:
+        clientes_qs = clientes_qs.filter(cpf__icontains=filtro_cpf)
+
+    paginator = Paginator(clientes_qs, 10)  # 10 clientes por página
+    page_number = request.GET.get('page')
+    clientes = paginator.get_page(page_number)
+
+    return render(request, 'cliente/lista_clientes.html', {
+        'clientes': clientes,
+        'filtro_cpf': filtro_cpf
+    })
+ 
 @login_required(login_url='login')
 def add_cliente(request):
     if request.method == 'POST':
@@ -68,6 +93,52 @@ def add_cliente(request):
         form = ClienteForm()
     return render(request, 'add_cliente_modal.html', {'form': form})
 
+# Editar Animal
+@csrf_exempt
+def edit_animal(request, pk):
+    animal = get_object_or_404(Animal, pk=pk) 
+    if request.method == "POST":
+        form = AnimalForm(request.POST, instance=animal)
+        if form.is_valid():
+            animal = form.save() 
+            return JsonResponse({
+                "success": True,
+                "nome": animal.nome, # retorna nome do animal
+                "raca": animal.raca  # retorna raca
+            })
+        return JsonResponse({"success": False, "errors": form.errors}) 
+    return JsonResponse({"success": False, "errors": "Método inválido"}) 
+
+
+# Editar Cliente
+@login_required(login_url='login')
+def edit_cliente(request, pk):
+    cliente = get_object_or_404(Cliente, pk=pk)
+    animais = cliente.animais.all()
+    form_pet = AnimalForm()
+    if request.method == 'POST':
+        form = ClienteForm(request.POST, instance=cliente)
+        if form.is_valid():
+            form.save()
+            return redirect('lista_clientes')
+    else:
+        form = ClienteForm(instance=cliente) 
+        
+        # Criar um dicionário de formulários para cada animal
+        forms_pet = {}
+        for animal in animais:
+            forms_pet[animal.id] = AnimalForm(instance=animal)
+        
+        print(forms_pet)
+
+
+    return render(request, 'cliente/edit_cliente.html', {
+        'form': form, 
+        'cliente': cliente, 
+        'animais': animais,
+        'form_pet': form_pet, # Add Pet 
+        'forms_pet': forms_pet # Edit Pet
+        })
  
 @login_required(login_url='login')
 def agendar_consulta(request):

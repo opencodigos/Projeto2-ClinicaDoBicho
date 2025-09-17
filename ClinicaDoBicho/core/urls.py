@@ -14,5 +14,10 @@ urlpatterns = [
     path('add_animal/', views.add_animal, name='add_animal'),
     path('add_cliente/', views.add_cliente, name='add_cliente'),
 
+    path('clientes/', views.lista_clientes, name='lista_clientes'), 
+    path('clientes/<int:pk>/edit/', views.edit_cliente, name='edit_cliente'),
+     
+    path('animal/<int:pk>/edit/', views.edit_animal, name='edit_animal'),
+
 
 ]
