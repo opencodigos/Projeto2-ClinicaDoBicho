@@ -1,0 +1,87 @@
+
+#calendar-container,
+#calendar_doctor {
+    width: 800px;      /* largura fixa */
+    max-width: 100%;   /* responsivo */
+    height: 600px;     /* altura fixa */
+    margin: 0 auto;
+}
+
+#calendar,
+#calendar_doctor {
+    height: 100% !important;
+}
+
+/* Título da toolbar */
+.fc .fc-toolbar-title {
+    font-size: 18px;
+    color: #333;
+    font-weight: bold;
+}
+
+/* Cabeçalho dos dias */
+.fc .fc-col-header-cell-cushion {
+    color: #444;
+    font-weight: 600;
+}
+
+/* Células do calendário */
+.fc .fc-daygrid-day {
+    background-color: #fff;
+    border: 1px solid #ddd;
+}
+
+.fc .fc-daygrid-day:hover {
+    background-color: #f8f9fa;
+}
+
+/* Eventos */
+.fc .fc-event {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: #fff;
+    /* font-weight: 500;  */
+}
+
+.fc-daygrid-dot-event .fc-event-title {
+    font-weight: normal;
+}
+
+/* Dia de hoje */
+.fc .fc-day-today {
+    background-color: rgba(255, 220, 40, 0.15) !important;
+}
+
+/* Botões */
+.fc .fc-button-primary {
+    background-color: #2863a7;
+    border-color: #2863a7;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.fc .fc-button-primary:hover {
+    background-color: #2863a7;
+    border-color: #2863a7;
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active,
+.fc .fc-button-primary:not(:disabled):active {
+    background-color: #1f4e83;
+    border-color: #1f4e83;
+}
+ 
+.fc .fc-list-event:hover td {
+    background-color: #238c3b;
+} 
+
+/* Responsividade */
+@media screen and (max-width: 768px) {
+    .fc .fc-toolbar {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .fc .fc-toolbar-title {
+        font-size: 16px;
+    }
+} 

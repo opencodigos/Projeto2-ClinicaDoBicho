@@ -1,7 +1,8 @@
 {% extends 'base.html' %} 
 {% block content %}
-<h2>Agendar Consulta</h2> 
- 
+<div class="page-header">
+    <h2 class="page-title">Agendar Consulta</h2>
+</div> 
 <!-- Buscar cliente -->     
 <form class="row g-3 mb-4" method="post" id="buscarClienteForm">
     {% csrf_token %} 
@@ -20,7 +21,7 @@
 </form> 
 
 
-{% include 'add_cliente_modal.html' %}
+{% include 'cliente/add_cliente_modal.html' %}
 
 
 {% if cliente %}
@@ -123,7 +124,7 @@
 
 {% endif %}
 
-{% include 'add_animal_modal.html' %}
+{% include 'animal/add_animal_modal.html' %}
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -174,6 +175,10 @@
             calendar_doctor = new FullCalendar.Calendar(calendarDoctor, {
                 initialView: 'timeGridWeek',
                 locale: 'pt-br',
+
+                nowIndicator: true, 
+                expandRows: true, // expande as linhas para ocupar todo o espaço 
+
                 events: '/eventos_doctor/?veterinario=' + veterinarioId,
 
                 headerToolbar: {
@@ -185,7 +190,9 @@
                 slotMinTime: '08:00:00',
                 slotMaxTime: '17:00:00',
                 slotDuration: '01:00:00',
-                allDaySlot: false,
+                slotLabelInterval: '01:00', // rótulo a cada hora
+                allDaySlot: false,  // não mostra a coluna de todos os dias
+
 
                 // Horário de trabalho (excluindo almoço)
                 businessHours: [
@@ -193,6 +200,8 @@
                     { daysOfWeek: [1, 2, 3, 4, 5], startTime: '13:00', endTime: '17:00' }
                 ],
                 
+                weekends: false, // não mostra sábado e doming
+
                 // Bloquear datas passadas
                 // validRange: {
                 //     start: new Date().toISOString().split('T')[0] // Data atual em formato YYYY-MM-DD

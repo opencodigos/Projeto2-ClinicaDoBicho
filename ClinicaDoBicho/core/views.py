@@ -36,7 +36,7 @@ def logout_view(request):
 def lista_animais(request):
     animais = Animal.objects.all() # Obtém todos os animais
     # print(animais) 
-    return render(request, 'lista_animais.html', {'animais': animais})
+    return render(request, 'animal/lista_animais.html', {'animais': animais})
 
 
 @login_required(login_url='login')
@@ -58,11 +58,26 @@ def add_animal(request):
             return JsonResponse({'errors': form.errors}, status=400)
     else:
         form = AnimalForm()
-    return render(request, 'add_animal_modal.html', {'form': form})
+    return render(request, 'animal/add_animal_modal.html', {'form': form})
  
+# Editar Animal
+@csrf_exempt
+def edit_animal(request, pk):
+    animal = get_object_or_404(Animal, pk=pk) 
+    if request.method == "POST":
+        form = AnimalForm(request.POST, instance=animal)
+        if form.is_valid():
+            animal = form.save() 
+            return JsonResponse({
+                "success": True,
+                "nome": animal.nome, # retorna nome do animal
+                "raca": animal.raca  # retorna raca
+            })
+        return JsonResponse({"success": False, "errors": form.errors}) 
+    return JsonResponse({"success": False, "errors": "Método inválido"}) 
 
 
-
+ 
 # Lista de Clientes
 @login_required(login_url='login')
 def lista_clientes(request):
@@ -92,23 +107,8 @@ def add_cliente(request):
             return JsonResponse({'errors': form.errors}, status=400)
     else:
         form = ClienteForm()
-    return render(request, 'add_cliente_modal.html', {'form': form})
+    return render(request, 'cliente/add_cliente_modal.html', {'form': form})
 
-# Editar Animal
-@csrf_exempt
-def edit_animal(request, pk):
-    animal = get_object_or_404(Animal, pk=pk) 
-    if request.method == "POST":
-        form = AnimalForm(request.POST, instance=animal)
-        if form.is_valid():
-            animal = form.save() 
-            return JsonResponse({
-                "success": True,
-                "nome": animal.nome, # retorna nome do animal
-                "raca": animal.raca  # retorna raca
-            })
-        return JsonResponse({"success": False, "errors": form.errors}) 
-    return JsonResponse({"success": False, "errors": "Método inválido"}) 
 
 
 # Editar Cliente
@@ -181,7 +181,7 @@ def add_veterinario(request):
             return JsonResponse({'errors': form.errors}, status=400)
     else:
         form = MedicoVeterinarioForm()
-    return render(request, 'add_veterinario_modal.html', {'form': form})
+    return render(request, 'veterinario/add_veterinario_modal.html', {'form': form})
     
     
 
@@ -199,7 +199,7 @@ def edit_veterinario(request, pk):
                   {'form': form, 'veterinario': veterinario})
     
 
-
+# Consultas 
 
 @login_required(login_url='login')
 def agendar_consulta(request):
@@ -242,7 +242,7 @@ def agendar_consulta(request):
         form = ConsultaForm()  
     form_pet = AnimalForm()
     form_cliente = ClienteForm()
-    return render(request, 'agendar_consulta.html', {
+    return render(request, 'consulta/agendar_consulta.html', {
         'form': form, 
         'cliente': cliente,
         'animais': animais, 
@@ -252,9 +252,26 @@ def agendar_consulta(request):
 
 
 @login_required(login_url='login')
-def lista_consultas(request):
-    consultas = Consulta.objects.all().order_by('-data')
-    return render(request, 'lista_consultas.html', {'consultas': consultas})
+def lista_consultas(request): 
+    
+    filtro_animal = request.GET.get('animal')
+    if filtro_animal:
+        consultas = Consulta.objects.filter(
+            animal__nome__icontains=filtro_animal)
+    else:
+        consultas = Consulta.objects.all()
+    
+    paginator = Paginator(consultas, 10)  # 10 consultas por página
+    page_number = request.GET.get('page')
+    consultas = paginator.get_page(page_number)
+    
+    return render(request, 'consulta/lista_consultas.html', 
+                  {'consultas': consultas, 
+                   'filtro_animal': filtro_animal
+                   })
+
+
+
 
 
 @login_required(login_url='login')

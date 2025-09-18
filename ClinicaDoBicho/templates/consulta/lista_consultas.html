@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% block content %} 
+<div class="page-header">
+    <h2 class="page-title">Consultas</h2>
+    <button class="btn btn-primary mb-3" onclick="window.location.href='{% url 'agendar_consulta' %}'">Agendar Consulta</button>
+</div> 
+
+<ul class="nav nav-tabs mb-3" id="consultaTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="calendar-tab" 
+            data-bs-toggle="tab" 
+            data-bs-target="#calendar-tab-pane"
+            type="button" 
+            role="tab" 
+            aria-controls="calendar-tab-pane"
+            aria-selected="true">Calendário</button>
+    </li>
+
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" 
+            id="lista-tab" 
+            data-bs-toggle="tab" 
+            data-bs-target="#lista-tab-pane" 
+            type="button" 
+            role="tab" 
+            aria-controls="lista-tab-pane" 
+            aria-selected="false">Agendamentos</button>
+    </li>
+</ul>
+
+<div class="tab-content" id="consultaTabsContent">
+    <!-- Tab de Calendário -->
+    <div class="tab-pane fade show active" id="calendar-tab-pane" role="tabpanel" aria-labelledby="calendar-tab" tabindex="0">
+        <div id="calendar-container" class="mt-3">
+            <div id="calendar"></div>
+        </div>
+    </div>
+
+    <!-- Tab de Lista -->
+    <div class="tab-pane fade" id="lista-tab-pane" role="tabpanel" aria-labelledby="lista-tab" tabindex="0">
+        
+        <div class="mb-3">
+            <form method="get" class="d-flex align-items-center">
+                <input type="text" name="animal" value="{{ filtro_animal|default_if_none:'' }}" class="form-control me-2" placeholder="Filtrar por Animal" style="max-width: 250px;">
+                <button type="submit" class="btn btn-primary me-2">Filtrar</button> 
+                {% if filtro_animal %}
+                <a href="{% url 'lista_consultas' %}" class="btn btn-secondary">Limpar</a>
+                {% endif %}
+            </form>
+        </div>
+        
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>Animal</th>
+                    <th>Veterinário</th>
+                    <th>Data</th>
+                    <th>Motivo</th> 
+                </tr>
+            </thead>
+            <tbody>
+                {% for consulta in consultas %}
+                <tr>
+                    <td>{{ consulta.animal.dono.nome }}</td>
+                    <td>{{ consulta.animal.nome }}</td>
+                    <td>{{ consulta.veterinario.nome }}</td>
+                    <td>{{ consulta.data|date:"d/m/Y H:i" }}</td>
+                    <td>{{ consulta.motivo|truncatewords:6 }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">Nenhuma consulta cadastrada.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table> 
+
+        {% include 'components/pagination.html' with page_obj=consultas %}
+    </div>
+ 
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var calendarEl = document.getElementById('calendar');
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        locale: 'pt-br',
+
+        nowIndicator: true, 
+        expandRows: true, // expande as linhas para ocupar todo o espaço
+
+
+        events: '/eventos/',  // sua rota Django que retorna JSON
+
+        // Configurações de horário
+        slotMinTime: '08:00:00',
+        slotMaxTime: '17:00:00',
+        slotDuration: '01:00:00',
+        slotLabelInterval: '01:00', // rótulo a cada hora
+        allDaySlot: false,  // não mostra a coluna de todos os dias
+
+
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+        },
+
+        // Horário de trabalho (excluindo almoço)
+        businessHours: [
+            { daysOfWeek: [1, 2, 3, 4, 5], startTime: '08:00', endTime: '12:00' },
+            { daysOfWeek: [1, 2, 3, 4, 5], startTime: '13:00', endTime: '17:00' }
+        ],
+
+        weekends: false, // não mostra sábado e domingo
+
+        editable: true,
+        eventOverlap: false,
+        selectable: true,
+        selectMirror: true,
+
+        // Bloquear datas passadas
+        // validRange: {
+        //     start: new Date().toISOString().split('T')[0] // Data atual em formato YYYY-MM-DD
+        // },
+
+        dateClick: function(info) {
+            alert("Você clicou em: " + info.dateStr);
+        },  
+
+        eventClick: function(info) {
+            alert("Evento: " + info.event.title);
+        }
+
+      });
+      
+      calendar.render();
+    });
+
+
+    // Abre modal para ver detalhes da consulta
+    
+  </script> 
+{% endblock %}
