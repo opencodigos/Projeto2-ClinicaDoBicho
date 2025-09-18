@@ -1,0 +1,14 @@
+{% extends 'base.html' %} 
+{% block content %} 
+<form method="post">
+    {% csrf_token %} 
+    <div class="page-header">
+        <h2 class="page-title">Editar Veterinário</h2>
+        <div class="d-flex align-items-center gap-2">
+            <button type="button" onclick="window.history.back()" class="btn btn-secondary">Voltar</button>
+            <button type="submit" class="btn btn-primary">Salvar Veterinário</button>
+        </div>
+    </div>
+    {{ form.as_p }}
+</form> 
+{% endblock %}

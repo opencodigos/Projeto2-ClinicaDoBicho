@@ -19,5 +19,7 @@ urlpatterns = [
      
     path('animal/<int:pk>/edit/', views.edit_animal, name='edit_animal'),
 
-
+    path('veterinarios/', views.lista_veterinarios, name='lista_veterinarios'), 
+    path('veterinarios/<int:pk>/edit/', views.edit_veterinario, name='edit_veterinario'),
+    path('add_veterinario/', views.add_veterinario, name='add_veterinario'),
 ]

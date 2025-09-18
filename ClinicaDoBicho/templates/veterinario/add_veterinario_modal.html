@@ -1,0 +1,55 @@
+<!-- Modal -->
+<div class="modal fade" id="veterinarioModal" tabindex="-1" aria-labelledby="veterinarioModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="veterinarioModalLabel">Adicionar Veterinário</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="veterinarioForm">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$(document).on("submit", "#veterinarioForm", function(e){
+    e.preventDefault();
+
+    $.ajax({
+        url: "/add_veterinario/",
+        method: "POST",
+        data: $(this).serialize(),
+        success: function(response){
+            console.log(response);
+
+            if (response.success) {
+                // Adicionar item na tabela html
+                let html_option = `<tr>
+                    <td>${response.nome}</td>
+                    <td>${response.crmv}</td>
+                    <td>${response.especialidade}</td>
+                    <td>${response.contato}</td>
+                    <td>
+                        <a href="${response.id}/edit/" class="btn btn-warning btn-sm">Editar</a>
+                    </td>
+                </tr>`;
+                $("#veterinariosTable tbody").append(html_option);
+                
+                $("#veterinarioModal").modal("hide"); 
+            }
+        },
+        error: function(response){
+            console.error(response); 
+        }
+    });
+});
+</script>

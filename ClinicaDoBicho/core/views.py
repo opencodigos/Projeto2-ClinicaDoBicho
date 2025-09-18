@@ -4,8 +4,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.contrib import messages
-from .models import Animal, Consulta, Cliente
-from .forms import ConsultaForm, AnimalForm, ClienteForm
+from django.db.models import Q 
+from .models import Animal, Consulta, Cliente, MedicoVeterinario
+from .forms import ConsultaForm, AnimalForm, ClienteForm, MedicoVeterinarioForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
@@ -140,6 +141,66 @@ def edit_cliente(request, pk):
         'forms_pet': forms_pet # Edit Pet
         })
  
+
+# Lista de Veterinarios
+@login_required(login_url='login')
+def lista_veterinarios(request):
+    q = request.GET.get('q', '')
+    veterinarios = MedicoVeterinario.objects.all()
+    form = MedicoVeterinarioForm()
+    if q:
+        veterinarios = veterinarios.filter(
+            Q(nome__icontains=q) | Q(crmv__icontains=q)
+        )
+    
+    paginator = Paginator(veterinarios, 10)  # 10 veterinários por página
+    page_number = request.GET.get('page')
+    veterinarios = paginator.get_page(page_number)
+    
+    return render(request, 'veterinario/lista_veterinarios.html', {
+                       'veterinarios': veterinarios, 
+                        'q': q,
+                        'form': form
+                    })
+
+# Add Veterinario
+def add_veterinario(request):
+    if request.method == 'POST':
+        form = MedicoVeterinarioForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({
+                "success": True,
+                 "id": form.instance.id,
+                 "nome": form.cleaned_data['nome'],
+                 "crmv": form.cleaned_data['crmv'],
+                 "especialidade": form.cleaned_data['especialidade'],
+                 "contato": form.cleaned_data['contato']
+                 }) 
+        else:
+            return JsonResponse({'errors': form.errors}, status=400)
+    else:
+        form = MedicoVeterinarioForm()
+    return render(request, 'add_veterinario_modal.html', {'form': form})
+    
+    
+
+# Editar Veterinario 
+def edit_veterinario(request, pk):
+    veterinario = get_object_or_404(MedicoVeterinario, pk=pk)
+    if request.method == 'POST':
+        form = MedicoVeterinarioForm(request.POST, instance=veterinario)
+        if form.is_valid():
+            form.save()
+            return redirect('lista_veterinarios')
+    else:
+        form = MedicoVeterinarioForm(instance=veterinario)
+    return render(request, 'veterinario/edit_veterinario.html', 
+                  {'form': form, 'veterinario': veterinario})
+    
+
+
+
 @login_required(login_url='login')
 def agendar_consulta(request):
     cliente = None

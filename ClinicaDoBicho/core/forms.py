@@ -1,5 +1,5 @@
 from django import forms 
-from .models import Consulta, Cliente, Animal
+from .models import Consulta, Cliente, Animal, MedicoVeterinario
 from django.contrib.auth.models import User 
 
 # Formulário para o modelo Animal
@@ -51,6 +51,19 @@ class ClienteForm(forms.ModelForm):
         if commit:
             cliente.save()
         return cliente 
+
+class MedicoVeterinarioForm(forms.ModelForm):
+    class Meta:
+        model = MedicoVeterinario
+        fields = ['nome', 'crmv', 'especialidade', 'contato']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control'})
+          
+
 
 # Formulário para o modelo Consulta
 class ConsultaForm(forms.ModelForm):

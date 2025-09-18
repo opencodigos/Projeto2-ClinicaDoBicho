@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %} 
+<div class="page-header d-flex justify-content-between align-items-center">
+
+    <div class="d-flex align-items-center gap-2"> 
+        <h2 class="page-title">Lista de Veterinários</h2>
+        <button type="button" class="btn btn-primary"
+             data-bs-toggle="modal" data-bs-target="#veterinarioModal">
+            +
+        </button>
+    </div>  
+
+    <form method="get" class="d-flex">
+        <input type="text" name="q" value="{{ q }}" class="form-control me-2" placeholder="Filtrar por nome">
+        <button type="submit" class="btn btn-primary me-2">Filtrar</button> 
+        {% if q %}
+        <a href="{% url 'lista_veterinarios' %}" class="btn btn-secondary">Limpar</a>
+        {% endif %}
+    </form>
+</div>
+
+{% include 'veterinario/add_veterinario_modal.html' %}
+
+<table class="table" id="veterinariosTable">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>CRMV</th>
+            <th>Especialidade</th>
+            <th>Contato</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for veterinario in veterinarios %}
+        <tr>
+            <td>{{ veterinario.nome }}</td>
+            <td>{{ veterinario.crmv }}</td>
+            <td>{{ veterinario.especialidade }}</td>
+            <td>{{ veterinario.contato }}</td>
+            <td>
+                <a href="{% url 'edit_veterinario' veterinario.id %}" class="btn btn-warning btn-sm">Editar</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table> 
+
+{% include "components/pagination.html" with page_obj=veterinarios %} 
+
+{% endblock %}
