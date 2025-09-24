@@ -71,7 +71,7 @@ class Consulta(models.Model):
 
     def clean(self):
         if Consulta.objects.filter(
-            data=self.data, veterinario=self.veterinario).exists():
+            data=self.data, veterinario=self.veterinario).exists() and self.status == 'Agendada':
             raise ValidationError('Já existe uma consulta agendada \
                                   para este horário com este veterinário.')
 

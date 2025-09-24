@@ -6,20 +6,21 @@ import {
   IonHeader,
   IonTitle,
   IonToolbar,
-  IonCard,
-  IonCardHeader,
-  IonCardSubtitle,
-  IonCardTitle,
-  IonCardContent,
   IonSegment,
   IonSegmentButton,
   IonLabel,
   IonBadge,
-  IonIcon
-} from '@ionic/angular/standalone';import { ApiService, Consulta } from '../services/api';
+  IonIcon,
+  AlertController,
+  IonItemOptions,
+  IonItemOption,
+  IonList,
+  IonItemSliding } from '@ionic/angular/standalone';
+
+import { ApiService, Consulta } from '../services/api';
 import { LoadingController } from '@ionic/angular';
 import { calendarOutline, medkitOutline, pawOutline, personOutline } from 'ionicons/icons';
-import { addIcons } from 'ionicons';
+import { addIcons } from 'ionicons'; 
 
 @Component({
   selector: 'app-consultas',
@@ -29,17 +30,16 @@ import { addIcons } from 'ionicons';
   imports: [
     CommonModule,
     FormsModule,
-    IonCardContent,
-    IonCardTitle,
-    IonCardSubtitle,
-    IonCardHeader,
-    IonCard,
     IonContent,
     IonHeader,
     IonTitle,
     IonToolbar,
     IonSegment,
     IonSegmentButton,
+    IonItemSliding,
+    IonList,
+    IonItemOption,
+    IonItemOptions,
     IonLabel,
     IonBadge,
     IonIcon
@@ -52,7 +52,9 @@ export class ConsultasPage implements OnInit {
 
   constructor(
     private api: ApiService,
-    private loadingCtrl: LoadingController) {
+    private loadingCtrl: LoadingController,
+    private alertCtrl: AlertController
+  ) {
     addIcons({
       calendarOutline,
       personOutline,
@@ -72,13 +74,12 @@ export class ConsultasPage implements OnInit {
       this.consultasFiltradas = [...this.consultas];
     } else {
       console.log(this.filtroStatus)
-      this.consultasFiltradas = this.consultas.filter(consulta =>
-        (consulta.status || 'agendada').toLowerCase() === this.filtroStatus
-      );
+      this.consultasFiltradas = this.consultas.filter(consulta => {
+        const statusNormalizado = (consulta.status || 'agendada').toLowerCase();
+        return statusNormalizado === this.filtroStatus;
+      });
     }
   }
-
-
 
   async listConsultas() {
 
@@ -108,4 +109,67 @@ export class ConsultasPage implements OnInit {
     });
 
   }
+
+
+
+// Cancelar uma consulta
+  async cancelarConsulta(consulta: Consulta) {
+
+    console.log("Cancelar consulta com ID:", consulta.id);
+
+    let data = {
+      id: consulta.id,
+      data: consulta.data,
+      motivo: consulta.motivo,
+      observacoes: consulta.observacoes,
+      status: 'Cancelada'
+    };
+
+    // Criar alert
+    const alert = await this.alertCtrl.create({
+      header: 'Confirmar cancelamento',
+      message: `Tem certeza que deseja cancelar a consulta ${consulta.animal.nome}?`,
+      buttons: [
+        {
+          text: 'Sair',
+          role: 'cancel'
+        },
+        {
+          text: 'Confirmar',
+          role: 'destructive',
+          handler: () => {
+            console.log('Consulta cancelada:', consulta);
+
+            this.api.editarConsulta(data as Consulta).subscribe({
+              next: () => {
+                console.log("Consulta cancelada com sucesso!");
+
+                // Atualiza localmente a consulta cancelada para feedback imediato
+                const index = this.consultas.findIndex(c => c.id === consulta.id);
+                console.log("Index da consulta cancelada:", index);
+                if (index !== -1) {
+                  this.consultas[index].status = 'Cancelada';
+                  this.filtrarConsultas(); // Atualiza a lista filtrada
+                }
+
+                // Recarrega todas as consultas do servidor
+                this.listConsultas();
+              },
+              error: (error) => {
+                console.error('Erro ao cancelar consulta:', error);
+              }
+            });
+
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+
+
+
+
 }

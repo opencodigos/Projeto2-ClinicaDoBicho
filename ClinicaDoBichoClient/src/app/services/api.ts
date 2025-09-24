@@ -50,6 +50,12 @@ export class ApiService {
     return this.http.post(`${this.baseUrl}/login/`, { username, password });
   }
 
+  // Editar Consulta
+  editarConsulta(consulta: Consulta): Observable<Consulta> {
+    return this.http.put<Consulta>(`${this.baseUrl}/consultas/${consulta.id}/`, consulta);
+  }
+
+
   // pegar consultas
   listConsultas(): Observable<Consulta[]> {
     console.log('ApiService: Método getConsultas() chamado. Fazendo requisição GET...');
@@ -88,7 +94,7 @@ export class ApiService {
     return this.http.put<Animal>(`${this.baseUrl}/animais/${animal.id}/`, animal);
   }
 
-  // Deletar um Animal 
+  // Deletar um Animal
   deleteAnimal(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/animais/${id}/`);
   }

@@ -34,13 +34,17 @@ export class CalendarComponent {
     selectable: true,
     events: [],
 
+    nowIndicator: true,
+    expandRows: true, // expande as linhas para ocupar todo o espaço
+
     weekends: false, // não mostra sábado e domingo
 
     // Configurações de horário
     slotMinTime: '08:00:00',
     slotMaxTime: '17:00:00',
     slotDuration: '01:00:00',
-    allDaySlot: false,
+    slotLabelInterval: '01:00', // rótulo a cada hora
+    allDaySlot: false, // não mostra a coluna de todos os dias
 
     // Horário de trabalho (excluindo almoço)
     businessHours: [
