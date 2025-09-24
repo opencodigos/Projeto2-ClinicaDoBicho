@@ -5,10 +5,12 @@ import { jwtDecode } from 'jwt-decode';
 import { Router } from '@angular/router';
 import { lastValueFrom } from 'rxjs';
 
+import { environment } from 'src/environments/environment';
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  private apiUrl = 'http://127.0.0.1:8000/api';
+  private apiUrl = environment.apiUrl + '/api'; // backend Django
   private accessTokenKey = 'access_token';
   private refreshTokenKey = 'refresh_token';
 
@@ -32,7 +34,7 @@ export class AuthService {
 
   // Renova access token usando refresh token
   async refreshToken(): Promise<any> {
-    const refresh = await this.storage.get(this.refreshTokenKey); 
+    const refresh = await this.storage.get(this.refreshTokenKey);
 
     const refreshObservable = this.http.post<any>(`${this.apiUrl}/auth/refresh/`, { refresh } );
 

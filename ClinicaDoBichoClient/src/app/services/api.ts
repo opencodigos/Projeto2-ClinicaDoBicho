@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { environment } from 'src/environments/environment';
+
+
 export interface Cliente {
   id?: number;
   nome: string;
@@ -41,9 +44,11 @@ export interface Consulta {
 })
 export class ApiService {
 
-  private baseUrl = 'http://127.0.0.1:8000/api'; // backend Django
+  private baseUrl = environment.apiUrl + '/api'; // backend Django
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    console.log('ApiService: baseUrl =', this.baseUrl);
+  }
 
   // login retorna login
   login(username: string, password: string): Observable<any> {

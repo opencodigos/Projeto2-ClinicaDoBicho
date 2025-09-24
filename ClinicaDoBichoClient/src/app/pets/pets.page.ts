@@ -21,7 +21,7 @@ import { addIcons } from 'ionicons';
 import { addCircleOutline, createOutline, trashOutline } from 'ionicons/icons';
 
 import { ApiService, Animal } from '../services/api';
-import { PetModalComponent } from './pets.modal'; 
+import { PetModalComponent } from './pets.modal';
 
 @Component({
   selector: 'app-pets',
@@ -37,8 +37,7 @@ import { PetModalComponent } from './pets.modal';
     IonToolbar,
     IonList,
     IonItem,
-    IonLabel,
-    IonAvatar,
+    IonLabel, 
     IonThumbnail,
     IonButtons,
     IonButton,
