@@ -14,7 +14,11 @@ export const routes: Routes = [
     path: '',
     redirectTo: 'tabs',
     pathMatch: 'full',
+  },  {
+    path: 'pets',
+    loadComponent: () => import('./pets/pets.page').then( m => m.PetsPage)
   },
+
   // {
   //   path: 'inicio',
   //   loadComponent: () => import('./inicio/inicio.page').then((m) => m.InicioPage),

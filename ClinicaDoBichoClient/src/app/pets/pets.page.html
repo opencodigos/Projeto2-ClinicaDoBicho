@@ -1,0 +1,42 @@
+<ion-header>
+  <ion-toolbar class="custom-toolbar">
+    <ion-title>Meus Pets</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button (click)="adicionarPet()">
+        <ion-icon size="large" name="add-circle-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list>
+    @for (pet of animais; track $index) {
+    <ion-item>
+
+      <ion-thumbnail slot="start">
+        <img alt="Foto do pet" [src]="'https://placehold.co/400'">
+      </ion-thumbnail>
+
+      <ion-label>
+        <h2>{{ pet.nome }} ({{ pet.tipo_especie }})</h2>
+        <p>Idade: {{ pet.idade }} anos</p>
+        <p>Raça: {{ pet.raca }}</p>
+        <p>Peso: {{ pet.peso }} kg</p>
+      </ion-label>
+
+      <ion-buttons slot="end">
+        <ion-button color="warning" (click)="editarPet(pet)">
+          <ion-icon size="large" name="create-outline"></ion-icon>
+        </ion-button>
+        <ion-button color="danger" (click)="excluirPet(pet)">
+          <ion-icon size="large" name="trash-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-item>
+
+     }
+  </ion-list>
+</ion-content>

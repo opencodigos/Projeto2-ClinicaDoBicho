@@ -78,6 +78,21 @@ export class ApiService {
     return this.http.get<Animal[]>(`${this.baseUrl}/animais/`);
   }
 
+  // Adicionar um novo Animal
+  addAnimal(animal: Animal): Observable<Animal> {
+    return this.http.post<Animal>(`${this.baseUrl}/animais/`, animal);
+  }
+
+  // Editar um Animal
+  editarAnimal(animal: Animal): Observable<Animal> {
+    return this.http.put<Animal>(`${this.baseUrl}/animais/${animal.id}/`, animal);
+  }
+
+  // Deletar um Animal 
+  deleteAnimal(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/animais/${id}/`);
+  }
+
   listVeterinarios(): Observable<Veterinario[]> {
     return this.http.get<Veterinario[]>(`${this.baseUrl}/veterinarios/`);
   }

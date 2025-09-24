@@ -22,6 +22,12 @@ class AnimalViewSet(viewsets.ModelViewSet):
     serializer_class = AnimalSerializer
     permission_classes = [IsAuthenticated]
 
+    def perform_create(self, serializer):
+        serializer.save(dono=self.request.user.cliente)
+
+    def perform_update(self, serializer): 
+        serializer.save(dono=self.request.user.cliente)
+
     def get_queryset(self):
         user = self.request.user
         if user.is_staff:
